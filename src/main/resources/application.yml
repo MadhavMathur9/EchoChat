@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: echochat
+    
+  # Enable Virtual Threads
+  threads:
+    virtual:
+      enabled: true
+
+  # Database Configuration
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5433/echochat}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    hikari:
+      maximum-pool-size: 20
+
+  # JPA / Hibernate
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        timeout: 1s
+    show-sql: false
+
+
+
+  # Redis Configuration
+  data:
+    redis:
+      url: ${REDIS_URL:redis://localhost:6379}
+      lettuce:
+        pool:
+          max-active: 20
+
+# Gemini API Configuration
+gemini:
+  model: ${GEMINI_MODEL:gemini-3.5-flash-lite}
+  # Set this in your Railway environment variables
+  api-key: ${GEMINI_API_KEY:}
+
+# Custom Application settings
+app:
+  security:
+    bcrypt-strength: ${BCRYPT_STRENGTH:12}
+  cors:
+    # Comma-separated list of allowed origins. Set to your Netlify URL in production.
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173}
