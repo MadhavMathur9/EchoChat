@@ -1,0 +1,41 @@
+spring:
+  # Database Configuration
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 50
+      minimum-idle: 10
+
+  # JPA / Hibernate
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: false
+    show-sql: false
+
+  # Redis Configuration
+  data:
+    redis:
+      url: ${REDIS_URL}
+      lettuce:
+        pool:
+          max-active: 100
+          max-idle: 50
+          min-idle: 10
+
+# Security settings
+app:
+  security:
+    bcrypt-strength: 14
+
+logging:
+  level:
+    root: INFO
+    com.chatapp: INFO
+    org.springframework.web: WARN
+    org.springframework.messaging: WARN
