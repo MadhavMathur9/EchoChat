@@ -42,6 +42,7 @@ export function RoomPage() {
   };
   
   const [metadata, setMetadata] = useState<RoomMetadataResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [password, setPassword] = useState('');
   const [isAuthorized, setIsAuthorized] = useState(false);
   
@@ -144,8 +145,8 @@ export function RoomPage() {
         }
       })
       .catch(() => {
-        toast.error("Room not found");
-        navigate('/');
+        leaveRoom(roomId);
+        setError("This room was auto cleaned and there is nothing to look here.");
       });
   }, [roomId, navigate]);
 
@@ -185,6 +186,21 @@ export function RoomPage() {
 
 
   
+  if (roomId && error) return (
+    <div className="flex h-screen items-center justify-center bg-bg-base">
+      <div className="flex flex-col items-center gap-4 text-center p-8 max-w-sm">
+        <div className="w-16 h-16 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center mx-auto mb-2">
+          <span className="text-accent text-2xl">🧹</span>
+        </div>
+        <h2 className="font-bold text-xl text-text-primary">Room Auto Cleaned</h2>
+        <p className="text-sm font-medium text-text-muted">{error}</p>
+        <Button onClick={() => navigate('/')} className="mt-4 bg-accent hover:bg-accent/90 text-bg-base rounded-full h-10 px-8 font-semibold transition-all">
+          Back to Home
+        </Button>
+      </div>
+    </div>
+  );
+
   if (roomId && !metadata) return (
     <div className="flex h-screen items-center justify-center bg-bg-base">
       <div className="flex flex-col items-center gap-4 text-text-muted">
