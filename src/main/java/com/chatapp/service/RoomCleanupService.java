@@ -1,5 +1,6 @@
 package com.chatapp.service;
 
+import com.chatapp.repository.MessageRepository;
 import com.chatapp.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ import java.util.List;
 public class RoomCleanupService {
 
     private final RoomRepository roomRepository;
+    private final MessageRepository messageRepository;
     private final StringRedisTemplate redisTemplate;
 
     @Scheduled(fixedRate = 60000) // Run every minute
@@ -39,6 +41,7 @@ public class RoomCleanupService {
             int currentCount = count != null ? count.intValue() : 0;
             
             if (currentCount <= 0) {
+                messageRepository.deleteAllByRoomIdIn(List.of(room.getId()));
                 roomRepository.delete(room);
                 redisTemplate.delete(usersKey);
                 redisTemplate.delete("room:" + room.getId() + ":messages"); // optional cleanup of other keys
