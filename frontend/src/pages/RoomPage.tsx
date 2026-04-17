@@ -186,22 +186,7 @@ export function RoomPage() {
 
 
   
-  if (roomId && error) return (
-    <div className="flex h-screen items-center justify-center bg-bg-base">
-      <div className="flex flex-col items-center gap-4 text-center p-8 max-w-sm">
-        <div className="w-16 h-16 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center mx-auto mb-2">
-          <span className="text-accent text-2xl">🧹</span>
-        </div>
-        <h2 className="font-bold text-xl text-text-primary">Room Auto Cleaned</h2>
-        <p className="text-sm font-medium text-text-muted">{error}</p>
-        <Button onClick={() => navigate('/')} className="mt-4 bg-accent hover:bg-accent/90 text-bg-base rounded-full h-10 px-8 font-semibold transition-all">
-          Back to Home
-        </Button>
-      </div>
-    </div>
-  );
-
-  if (roomId && !metadata) return (
+  if (roomId && !metadata && !error) return (
     <div className="flex h-screen items-center justify-center bg-bg-base">
       <div className="flex flex-col items-center gap-4 text-text-muted">
         <div className="w-10 h-10 rounded-xl border-2 border-accent/30 border-t-accent animate-spin" />
@@ -368,7 +353,18 @@ export function RoomPage() {
         transition={{ duration: 0.4, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
         className="flex-1 flex flex-col relative min-w-0 bg-bg-card rounded-2xl border border-border-subtle overflow-hidden shadow-2xl shadow-accent/10"
       >
-        {!roomId ? (
+        {error ? (
+          <div className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-bg-card">
+            <div className="w-20 h-20 mb-6 rounded-3xl bg-accent/10 border border-accent/20 flex items-center justify-center shadow-inner relative overflow-hidden group">
+              <span className="text-4xl drop-shadow-sm">🧹</span>
+            </div>
+            <h2 className="text-2xl font-bold text-text-primary mb-2 tracking-tight">Room Auto Cleaned</h2>
+            <p className="text-sm text-text-muted max-w-sm mt-2 leading-relaxed">{error}</p>
+            <Button onClick={() => { window.location.href = '/room'; }} className="mt-6 bg-accent hover:bg-accent/90 text-bg-base font-semibold rounded-full px-8 h-10 transition-all active:scale-[0.98]">
+              OK
+            </Button>
+          </div>
+        ) : !roomId ? (
           <div className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-bg-card">
             <div className="w-20 h-20 mb-6 rounded-3xl bg-bg-elevated border border-border-subtle flex items-center justify-center shadow-inner relative overflow-hidden group">
               <div className="absolute inset-0 bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity" />
