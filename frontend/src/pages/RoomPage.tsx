@@ -360,8 +360,8 @@ export function RoomPage() {
             </div>
             <h2 className="text-2xl font-bold text-text-primary mb-2 tracking-tight">Room Auto Cleaned</h2>
             <p className="text-sm text-text-muted max-w-sm mt-2 leading-relaxed">{error}</p>
-            <Button onClick={() => { window.location.href = '/room'; }} className="mt-6 bg-accent hover:bg-accent/90 text-bg-base font-semibold rounded-full px-8 h-10 transition-all active:scale-[0.98]">
-              OK
+            <Button onClick={() => navigate('/room')} className="mt-6 bg-accent hover:bg-accent/90 text-bg-base font-semibold rounded-full px-8 h-10 transition-all active:scale-[0.98]">
+              Back to Rooms
             </Button>
           </div>
         ) : !roomId ? (
