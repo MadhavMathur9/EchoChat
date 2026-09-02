@@ -10,7 +10,7 @@ import com.chatapp.repository.RoomRepository;
 import com.github.f4b6a3.uuid.UuidCreator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.StringRedisTemplate;
+
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -34,7 +34,7 @@ public class ChatMessageHandler {
     private final RoomRepository roomRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final MessageMapper messageMapper;
-    private final StringRedisTemplate redisTemplate;
+
     private final GeminiService geminiService;
 
     @MessageMapping("/chat/{roomId}")
@@ -72,11 +72,7 @@ public class ChatMessageHandler {
                 
         message = messageRepository.save(message);
 
-        // 2. Update room:{roomId}:last_active in Redis
-        redisTemplate.opsForValue().set("room:" + roomId + ":last_active", 
-                String.valueOf(Instant.now().toEpochMilli()));
-
-        // 3. Broadcast to room
+        // 2. Broadcast to room
         MessageDTO dto = messageMapper.toDto(message);
         messagingTemplate.convertAndSend("/topic/room/" + roomId, dto);
 
