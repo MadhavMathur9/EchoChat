@@ -10,9 +10,13 @@ function App() {
       <AnimatedBackground />
       <Toaster position="top-center" toastOptions={{
         style: {
-          background: '#1a1a28',
-          color: '#f0f0ff',
-          border: '1px solid #2a2a40'
+          background: '#190B11',
+          color: '#FFF1F5',
+          border: '1px solid #3B1A27',
+          borderRadius: '12px',
+          boxShadow: '0 8px 32px rgba(159, 18, 57, 0.25)',
+          fontSize: '13px',
+          fontFamily: 'Inter, system-ui, sans-serif',
         }
       }} />
       <Routes>
