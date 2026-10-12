@@ -35,40 +35,50 @@ export function MessageList({ messages, currentUserUuid }: MessageListProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const [isScrolledUp, setIsScrolledUp] = useState(false);
+  const isScrolledUpRef = useRef(false);
   const [unreadCount, setUnreadCount] = useState(0);
-  const prevMessagesCount = useRef(messages.length);
+  const prevMessagesCount = useRef(0);
+  const isInitialMount = useRef(true);
 
   // Detect user scroll position
   const handleScroll = (e: UIEvent<HTMLDivElement>) => {
     const el = e.currentTarget;
     const distanceToBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
-    const scrolledUp = distanceToBottom > 120;
+    const scrolledUp = distanceToBottom > 80;
     setIsScrolledUp(scrolledUp);
+    isScrolledUpRef.current = scrolledUp;
 
     if (!scrolledUp) {
       setUnreadCount(0);
     }
   };
 
-  // Handle new incoming messages
+  // Scroll to bottom on initial message load or incoming new messages
   useEffect(() => {
-    const newCount = messages.length - prevMessagesCount.current;
-    if (newCount > 0) {
-      if (isScrolledUp) {
+    if (messages.length === 0) return;
+
+    if (isInitialMount.current) {
+      bottomRef.current?.scrollIntoView({ behavior: 'auto' });
+      isInitialMount.current = false;
+      prevMessagesCount.current = messages.length;
+      return;
+    }
+
+    if (messages.length > prevMessagesCount.current) {
+      const newCount = messages.length - prevMessagesCount.current;
+      if (isScrolledUpRef.current) {
         setUnreadCount(prev => prev + newCount);
       } else {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
       }
-    } else {
-      // Initial load or history replacement
-      bottomRef.current?.scrollIntoView({ behavior: 'auto' });
     }
     prevMessagesCount.current = messages.length;
-  }, [messages.length, isScrolledUp]);
+  }, [messages.length]);
 
   const scrollToBottom = () => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     setIsScrolledUp(false);
+    isScrolledUpRef.current = false;
     setUnreadCount(0);
   };
 

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { Client } from '@stomp/stompjs';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
@@ -25,7 +25,7 @@ import { useJoinedRooms } from '../hooks/useJoinedRooms';
 import { MessageList } from '../components/chat/MessageList';
 import { ChatInput } from '../components/chat/ChatInput';
 import { TypingIndicator } from '../components/chat/TypingIndicator';
-import type { RoomMetadataResponse } from '../types';
+import type { RoomMetadataResponse, MessageDTO } from '../types';
 import toast from 'react-hot-toast';
 import { apiFetch } from '@/lib/api';
 
@@ -189,12 +189,33 @@ export function RoomPage() {
   }, [uuid, displayName, leaveRoom]);
 
   const { history } = useRoomHistory(isAuthorized ? roomId : undefined);
-  const { messages, sendMessage, isConnected, activeCount, roomExpired } = useChatRoom({
+  const { messages, sendMessage, isConnected, activeCount, roomExpired, participants } = useChatRoom({
     roomId: isAuthorized ? roomId! : '',
     userUuid: uuid || '',
     displayName: displayName || '',
     initialActiveCount: metadata?.activeCount || 0,
   });
+
+  const [mentionToInsert, setMentionToInsert] = useState<string | null>(null);
+
+  // Combine all known room members from presence events, incoming messages, history, and yourself
+  const allMembers = useMemo(() => {
+    const set = new Set<string>();
+    if (displayName && displayName.trim()) set.add(displayName.trim());
+    participants.forEach(p => {
+      if (p && p.trim()) set.add(p.trim());
+    });
+    history.forEach(m => {
+      if (m.senderType !== 'GEMINI' && m.senderName && m.senderName !== 'System') {
+        set.add(m.senderName.trim());
+      }
+    });
+    return Array.from(set);
+  }, [displayName, participants, history]);
+
+  const otherParticipants = useMemo(() => {
+    return allMembers.filter(m => m !== displayName);
+  }, [allMembers, displayName]);
 
   // When room expires, cleanup
   useEffect(() => {
@@ -207,12 +228,30 @@ export function RoomPage() {
     }
   }, [roomExpired, roomId, leaveRoom]);
 
-  const [allMessages, setAllMessages] = useState(history);
+  const [allMessages, setAllMessages] = useState<MessageDTO[]>([]);
   const [isAiTyping, setIsAiTyping] = useState(false);
   const aiTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Clear room message state when switching rooms to prevent chats leaking into each other
   useEffect(() => {
-    setAllMessages([...history, ...messages]);
+    setAllMessages([]);
+    setMentionToInsert(null);
+    setIsAiTyping(false);
+    if (aiTimeoutRef.current) clearTimeout(aiTimeoutRef.current);
+  }, [roomId]);
+
+  useEffect(() => {
+    const combined = [...history, ...messages];
+    const seen = new Set<string>();
+    const unique: MessageDTO[] = [];
+    for (const msg of combined) {
+      const key = msg.id || `${msg.timestamp}-${msg.senderUuid}-${msg.content}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        unique.push(msg);
+      }
+    }
+    setAllMessages(unique);
   }, [history, messages]);
 
   // Clear AI typing indicator when Gemini replies
@@ -768,7 +807,7 @@ export function RoomPage() {
             </header>
 
             {/* Message Area: flat --bg, no doodles (PRD Step 3) */}
-            <div className="flex-1 flex flex-col relative overflow-hidden bg-bg chat-canvas select-text">
+            <div className="flex-1 min-h-0 flex flex-col relative overflow-hidden bg-bg chat-canvas select-text">
               {allMessages.length === 0 ? (
                 /* Empty state */
                 <div className="flex-1 flex flex-col items-center justify-center text-center p-6 sm:p-10 select-none">
@@ -799,7 +838,7 @@ export function RoomPage() {
                   </div>
                 </div>
               ) : (
-                <MessageList messages={allMessages} currentUserUuid={uuid} />
+                <MessageList key={roomId} messages={allMessages} currentUserUuid={uuid} />
               )}
 
               {/* Gemini Thinking Indicator */}
@@ -811,7 +850,9 @@ export function RoomPage() {
               <ChatInput
                 onSendMessage={handleSend}
                 disabled={!isConnected}
-                members={displayName ? [displayName] : []}
+                members={allMembers}
+                mentionToInsert={mentionToInsert}
+                onMentionInserted={() => setMentionToInsert(null)}
               />
             </footer>
           </>
@@ -895,23 +936,64 @@ export function RoomPage() {
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[11px] font-semibold text-text-3 uppercase tracking-wider flex items-center gap-1.5">
                     <Users className="w-3.5 h-3.5 text-terracotta" />
-                    <span>Active Now ({activeCount})</span>
+                    <span>Participants ({Math.max(activeCount, allMembers.length)})</span>
+                  </span>
+                  <span className="text-[10px] text-online font-medium flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-online animate-pulse" />
+                    {activeCount} online
                   </span>
                 </div>
-                <div className="space-y-1.5">
-                  <div className="flex items-center gap-2 p-2 rounded-lg bg-elevated/70 border border-border/70">
-                    <div className="w-2 h-2 rounded-full bg-online animate-pulse" />
-                    <span className="text-xs font-medium text-text truncate">
-                      {displayName} (You)
-                    </span>
-                  </div>
-                  {activeCount > 1 && (
-                    <div className="flex items-center gap-2 p-2 rounded-lg bg-elevated/40 border border-border/40 text-text-3">
-                      <div className="w-2 h-2 rounded-full bg-online" />
-                      <span className="text-xs truncate">
-                        +{activeCount - 1} other participant{activeCount > 2 ? 's' : ''}
+
+                <div className="space-y-1.5 max-h-52 overflow-y-auto scrollbar-thin pr-0.5">
+                  {/* Current User */}
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-elevated/80 border border-border/80">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className="w-2 h-2 rounded-full bg-online animate-pulse shrink-0" />
+                      <span className="text-xs font-medium text-text truncate">
+                        {displayName}
                       </span>
                     </div>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-sage/30 text-online font-semibold shrink-0">
+                      You
+                    </span>
+                  </div>
+
+                  {/* Other participants */}
+                  {otherParticipants.map(name => (
+                    <div
+                      key={name}
+                      className="flex items-center justify-between p-2 rounded-lg bg-elevated/50 hover:bg-elevated border border-border/60 transition-all group"
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="w-2 h-2 rounded-full bg-online shrink-0" />
+                        <span className="text-xs font-medium text-text truncate" title={name}>
+                          {name}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => setMentionToInsert(name)}
+                        className="px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold text-gold bg-gold/15 hover:bg-gold/25 transition-all active:scale-95 shrink-0"
+                        title={`Mention @${name}`}
+                      >
+                        @{name}
+                      </button>
+                    </div>
+                  ))}
+
+                  {/* If activeCount exceeds named members */}
+                  {activeCount > allMembers.length && (
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-elevated/30 border border-dashed border-border/50 text-text-3">
+                      <div className="w-2 h-2 rounded-full bg-online/70 shrink-0" />
+                      <span className="text-[11px] truncate">
+                        +{activeCount - allMembers.length} other participant{activeCount - allMembers.length > 1 ? 's' : ''}
+                      </span>
+                    </div>
+                  )}
+
+                  {otherParticipants.length === 0 && activeCount <= 1 && (
+                    <p className="text-[11px] text-text-3 italic px-1 pt-1">
+                      No other participants yet. Share the invite ID to chat!
+                    </p>
                   )}
                 </div>
               </div>

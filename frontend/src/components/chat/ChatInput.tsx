@@ -6,6 +6,8 @@ interface ChatInputProps {
   onSendMessage: (content: string) => void;
   disabled?: boolean;
   members?: string[];
+  mentionToInsert?: string | null;
+  onMentionInserted?: () => void;
 }
 
 interface MentionItem {
@@ -16,13 +18,38 @@ interface MentionItem {
   isAi: boolean;
 }
 
-export function ChatInput({ onSendMessage, disabled, members = [] }: ChatInputProps) {
+export function ChatInput({
+  onSendMessage,
+  disabled,
+  members = [],
+  mentionToInsert,
+  onMentionInserted,
+}: ChatInputProps) {
   const [text, setText] = useState('');
   const [showMentionMenu, setShowMentionMenu] = useState(false);
   const [mentionQuery, setMentionQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // Insert mention triggered from external actions (like clicking participant in sidebar)
+  useEffect(() => {
+    if (mentionToInsert) {
+      setText(prev => {
+        const trimmed = prev.trim();
+        const addition = `@${mentionToInsert} `;
+        return trimmed ? `${trimmed} ${addition}` : addition;
+      });
+      setTimeout(() => {
+        if (textareaRef.current) {
+          textareaRef.current.focus();
+          textareaRef.current.selectionStart = textareaRef.current.value.length;
+          textareaRef.current.selectionEnd = textareaRef.current.value.length;
+        }
+      }, 0);
+      onMentionInserted?.();
+    }
+  }, [mentionToInsert, onMentionInserted]);
 
   // Available mentions: Gemini AI + room members
   const mentionOptions: MentionItem[] = [

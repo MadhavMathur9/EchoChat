@@ -94,7 +94,11 @@
 }
 
 @layer components {
-  /* Thin neutral scrollbar styled with --border thumb on transparent track */
+  /* Standard & thin neutral scrollbar styled with --border thumb on transparent track */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
   ::-webkit-scrollbar {
     width: 5px;
     height: 5px;

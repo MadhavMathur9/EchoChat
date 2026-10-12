@@ -12,17 +12,22 @@ interface UseChatRoomOptions {
 
 export function useChatRoom({ roomId, userUuid, displayName, initialActiveCount = 0 }: UseChatRoomOptions) {
   const [messages, setMessages] = useState<MessageDTO[]>([]);
+  const [participants, setParticipants] = useState<string[]>(displayName ? [displayName] : []);
   const [isConnected, setIsConnected] = useState(false);
   const [activeCount, setActiveCount] = useState(initialActiveCount);
   const [error, setError] = useState<string | null>(null);
   const [roomExpired, setRoomExpired] = useState(false);
   const clientRef = useRef<Client | null>(null);
 
+  // Reset room state when roomId changes to prevent message leaks
   useEffect(() => {
-    if (initialActiveCount > 0) {
-      setActiveCount(prev => Math.max(prev, initialActiveCount));
-    }
-  }, [initialActiveCount]);
+    setMessages([]);
+    setError(null);
+    setRoomExpired(false);
+    setIsConnected(false);
+    setActiveCount(initialActiveCount);
+    setParticipants(displayName ? [displayName] : []);
+  }, [roomId, displayName, initialActiveCount]);
 
   useEffect(() => {
     if (!roomId || !userUuid || !displayName) return;
@@ -43,6 +48,12 @@ export function useChatRoom({ roomId, userUuid, displayName, initialActiveCount 
         client.subscribe(`/topic/room/${roomId}`, (frame) => {
           const msg: MessageDTO = JSON.parse(frame.body);
           setMessages(prev => [...prev, msg]);
+          if (msg.senderName && msg.senderType !== 'GEMINI' && msg.senderName !== 'System') {
+            setParticipants(prev => {
+              if (prev.includes(msg.senderName)) return prev;
+              return [...prev, msg.senderName];
+            });
+          }
         });
 
         client.subscribe(`/topic/room/${roomId}/presence`, (frame) => {
@@ -52,6 +63,17 @@ export function useChatRoom({ roomId, userUuid, displayName, initialActiveCount 
             return;
           }
           setActiveCount(presence.activeCount);
+
+          if (presence.type === 'JOIN' && presence.senderName && presence.senderName !== 'System') {
+            setParticipants(prev => {
+              if (prev.includes(presence.senderName)) return prev;
+              return [...prev, presence.senderName];
+            });
+          } else if (presence.type === 'LEAVE' && presence.senderName) {
+            setParticipants(prev =>
+              prev.filter(name => name !== presence.senderName || name === displayName)
+            );
+          }
         });
 
         client.subscribe(`/user/queue/errors`, (frame) => {
@@ -105,6 +127,7 @@ export function useChatRoom({ roomId, userUuid, displayName, initialActiveCount 
     isConnected, 
     activeCount: isConnected ? Math.max(activeCount, 1) : activeCount, 
     error,
-    roomExpired
+    roomExpired,
+    participants,
   };
 }
