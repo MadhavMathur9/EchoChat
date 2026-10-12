@@ -15,6 +15,7 @@ export function useChatRoom({ roomId, userUuid, displayName, initialActiveCount 
   const [isConnected, setIsConnected] = useState(false);
   const [activeCount, setActiveCount] = useState(initialActiveCount);
   const [error, setError] = useState<string | null>(null);
+  const [roomExpired, setRoomExpired] = useState(false);
   const clientRef = useRef<Client | null>(null);
 
   useEffect(() => {
@@ -46,6 +47,10 @@ export function useChatRoom({ roomId, userUuid, displayName, initialActiveCount 
 
         client.subscribe(`/topic/room/${roomId}/presence`, (frame) => {
           const presence: PresenceDTO = JSON.parse(frame.body);
+          if (presence.type === 'ROOM_EXPIRED') {
+            setRoomExpired(true);
+            return;
+          }
           setActiveCount(presence.activeCount);
         });
 
@@ -99,6 +104,7 @@ export function useChatRoom({ roomId, userUuid, displayName, initialActiveCount 
     sendMessage, 
     isConnected, 
     activeCount: isConnected ? Math.max(activeCount, 1) : activeCount, 
-    error 
+    error,
+    roomExpired
   };
 }

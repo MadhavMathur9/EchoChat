@@ -8,7 +8,7 @@ export interface MessageDTO {
 }
 
 export interface PresenceDTO {
-  type: 'JOIN' | 'LEAVE';
+  type: 'JOIN' | 'LEAVE' | 'SYNC' | 'ROOM_EXPIRED';
   senderName: string;
   activeCount: number;
 }

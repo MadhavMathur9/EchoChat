@@ -53,6 +53,12 @@ public class PresenceEventListener {
             return;
         }
 
+        // Skip presence tracking for the global expiry listener
+        if ("__global__".equals(roomId)) {
+            accessor.getSessionAttributes().put("roomId", roomId);
+            return;
+        }
+
         accessor.getSessionAttributes().put("roomId", roomId);
         accessor.getSessionAttributes().put("displayName", displayName);
         accessor.getSessionAttributes().put("userId", userId);

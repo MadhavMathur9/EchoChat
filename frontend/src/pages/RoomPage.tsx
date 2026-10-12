@@ -1,4 +1,5 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
+import { Client } from '@stomp/stompjs';
 import { useParams, useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -96,20 +97,66 @@ export function RoomPage() {
     }
   };
 
-  useEffect(() => {
+  // Fetch public rooms initially and re-fetch periodically to stay fresh
+  const fetchPublicRooms = useCallback(() => {
     apiFetch('/api/v1/rooms/public')
       .then(res => res.json())
       .then(data => setPublicRooms(data))
       .catch(console.error);
   }, []);
 
+  useEffect(() => {
+    fetchPublicRooms();
+    const interval = setInterval(fetchPublicRooms, 30000); // refresh every 30s
+    return () => clearInterval(interval);
+  }, [fetchPublicRooms]);
+
+  // Subscribe to global room expiry events so we can clean up sidebar lists
+  // even for rooms the user is not currently viewing
+  const globalClientRef = useRef<Client | null>(null);
+  useEffect(() => {
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const brokerURL = import.meta.env.VITE_WS_URL || `${protocol}//${window.location.host}/ws`;
+
+    const client = new Client({
+      brokerURL,
+      connectHeaders: { userId: uuid || 'anon', displayName: displayName || 'anon', roomId: '__global__' },
+      reconnectDelay: 10000,
+      onConnect: () => {
+        client.subscribe('/topic/rooms/expired', (frame) => {
+          const data = JSON.parse(frame.body);
+          if (data.type === 'ROOM_EXPIRED') {
+            const expiredRoomId = data.senderName; // roomId is sent in senderName field
+            leaveRoom(expiredRoomId);
+            setPublicRooms(prev => prev.filter(r => r.roomId !== expiredRoomId));
+          }
+        });
+      },
+    });
+
+    client.activate();
+    globalClientRef.current = client;
+    return () => { client.deactivate(); };
+  }, [uuid, displayName, leaveRoom]);
+
   const { history } = useRoomHistory(isAuthorized ? roomId : undefined);
-  const { messages, sendMessage, isConnected, activeCount } = useChatRoom({
+  const { messages, sendMessage, isConnected, activeCount, roomExpired } = useChatRoom({
     roomId: isAuthorized ? roomId! : '',
     userUuid: uuid || '',
     displayName: displayName || '',
     initialActiveCount: metadata?.activeCount || 0
   });
+
+  // When the current room expires, remove it from lists and show the error state
+  useEffect(() => {
+    if (roomExpired && roomId) {
+      leaveRoom(roomId);
+      setPublicRooms(prev => prev.filter(r => r.roomId !== roomId));
+      setMetadata(null);
+      setError('This room has expired and was automatically cleaned up.');
+      toast.error('This room has expired.');
+    }
+  }, [roomExpired, roomId, leaveRoom]);
 
   const [allMessages, setAllMessages] = useState(history);
   const [isAiTyping, setIsAiTyping] = useState(false);
