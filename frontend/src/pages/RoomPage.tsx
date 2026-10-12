@@ -68,7 +68,6 @@ export function RoomPage() {
   };
 
   const [metadata, setMetadata] = useState<RoomMetadataResponse | null>(null);
-  const [isLoadingMetadata, setIsLoadingMetadata] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [password, setPassword] = useState('');
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -228,6 +227,8 @@ export function RoomPage() {
 
   // Fetch current room metadata
   useEffect(() => {
+    let cancelled = false;
+
     if (!roomId) {
       setMetadata(null);
       setError(null);
@@ -235,8 +236,9 @@ export function RoomPage() {
       return;
     }
 
-    setIsLoadingMetadata(true);
+    setMetadata(null);
     setError(null);
+    setIsAuthorized(false);
 
     apiFetch(`/api/v1/rooms/${roomId}`)
       .then(res => {
@@ -244,6 +246,7 @@ export function RoomPage() {
         return res.json();
       })
       .then(data => {
+        if (cancelled) return;
         setMetadata(data);
         if (!data.isPrivate) {
           setIsAuthorized(true);
@@ -253,12 +256,14 @@ export function RoomPage() {
         }
       })
       .catch(() => {
+        if (cancelled) return;
         leaveRoom(roomId);
         setError('This room does not exist or has expired.');
-      })
-      .finally(() => {
-        setIsLoadingMetadata(false);
       });
+
+    return () => {
+      cancelled = true;
+    };
   }, [roomId, joinRoom, leaveRoom]);
 
   const handleValidatePassword = async () => {
@@ -573,7 +578,7 @@ export function RoomPage() {
           ======================================================== */}
       <main className="flex-1 flex flex-col min-w-0 bg-[#190B11] rounded-2xl border border-[#3B1A27] overflow-hidden shadow-2xl shadow-[#9F1239]/10 relative">
         {/* Loading State */}
-        {isLoadingMetadata ? (
+        {roomId && !metadata && !error ? (
           <div className="flex-1 flex items-center justify-center bg-[#0E0609]">
             <div className="flex flex-col items-center gap-3 text-[#C9A3B2]">
               <div className="w-8 h-8 rounded-full border-2 border-[#FF5C9A]/30 border-t-[#FF5C9A] animate-spin" />

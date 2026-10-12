@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export interface JoinedRoom {
   roomId: string;
@@ -12,7 +12,7 @@ export function useJoinedRooms() {
       const stored = localStorage.getItem('echochat_joined_rooms');
       return stored ? JSON.parse(stored) : [];
     } catch (e) {
-      console.error("Failed to parse joined rooms", e);
+      console.error('Failed to parse joined rooms', e);
       return [];
     }
   });
@@ -21,22 +21,22 @@ export function useJoinedRooms() {
     localStorage.setItem('echochat_joined_rooms', JSON.stringify(joinedRooms));
   }, [joinedRooms]);
 
-  const joinRoom = (roomId: string, name: string) => {
+  const joinRoom = useCallback((roomId: string, name: string) => {
     setJoinedRooms(prev => {
       if (prev.some(r => r.roomId === roomId)) {
         return prev;
       }
       return [...prev, { roomId, name, joinedAt: Date.now() }];
     });
-  };
+  }, []);
 
-  const leaveRoom = (roomId: string) => {
+  const leaveRoom = useCallback((roomId: string) => {
     setJoinedRooms(prev => prev.filter(r => r.roomId !== roomId));
-  };
+  }, []);
 
   return {
     joinedRooms,
     joinRoom,
-    leaveRoom
+    leaveRoom,
   };
 }
