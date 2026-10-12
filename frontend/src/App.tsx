@@ -10,11 +10,11 @@ function App() {
       <AnimatedBackground />
       <Toaster position="top-center" toastOptions={{
         style: {
-          background: '#190B11',
-          color: '#FFF1F5',
-          border: '1px solid #3B1A27',
+          background: '#212824',
+          color: '#F2EEE6',
+          border: '1px solid #38443D',
           borderRadius: '12px',
-          boxShadow: '0 8px 32px rgba(159, 18, 57, 0.25)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
           fontSize: '13px',
           fontFamily: 'Inter, system-ui, sans-serif',
         }

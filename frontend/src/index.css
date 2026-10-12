@@ -8,53 +8,51 @@
 @layer base {
   :root,
   .dark {
-    --bg: #0E0609;
-    --surface: #190B11;
-    --elevated: #251019;
-    --border: #3B1A27;
-    --burgundy: #9F1239;
-    --pink: #FF5C9A;
-    --red: #F43F5E;
-    --blue: #4F8EF7;
-    --yellow: #FACC15;
-    --green: #22C55E;
-    --text: #FFF1F5;
-    --text-2: #C9A3B2;
-    --text-3: #8A6674;
-    --grad-brand: linear-gradient(135deg, #9F1239, #FF5C9A);
-    --grad-cta: linear-gradient(135deg, #FF5C9A, #F43F5E);
-    --grad-ai: linear-gradient(135deg, #3B82F6, #60A5FA);
-    --grad-headline: linear-gradient(90deg, #FF5C9A, #FACC15);
+    --bg: #1A1F1C;
+    --surface: #212824;
+    --elevated: #2A332E;
+    --border: #38443D;
+    --sage: #2E5A44;
+    --terracotta: #D9774F;
+    --rose: #E88CA5;
+    --burgundy: #8C2F45;
+    --blue: #7FA8E8;
+    --gold: #E3B94F;
+    --online: #5FBF8A;
+    --text: #F2EEE6;
+    --text-2: #B8BFB5;
+    --text-3: #8C968B;
+    --on-terracotta: #1A1F1C;
 
-    /* Shadcn / Tailwind mappings */
+    /* Semantic UI mappings */
     --background: var(--bg);
     --foreground: var(--text);
-    --card: var(--surface);
+    --card: var(--elevated);
     --card-foreground: var(--text);
     --popover: var(--surface);
     --popover-foreground: var(--text);
-    --primary: var(--pink);
-    --primary-foreground: #0E0609;
+    --primary: var(--terracotta);
+    --primary-foreground: var(--on-terracotta);
     --secondary: var(--elevated);
     --secondary-foreground: var(--text);
     --muted: var(--elevated);
     --muted-foreground: var(--text-2);
-    --accent: var(--pink);
-    --accent-foreground: #0E0609;
-    --destructive: var(--red);
-    --destructive-foreground: #FFFFFF;
-    --input: #3B1A27;
-    --ring: var(--yellow);
+    --accent: var(--terracotta);
+    --accent-foreground: var(--on-terracotta);
+    --destructive: var(--burgundy);
+    --destructive-foreground: var(--text);
+    --input: var(--border);
+    --ring: var(--gold);
     --radius: 0.75rem;
 
     --sidebar: var(--surface);
     --sidebar-foreground: var(--text);
-    --sidebar-primary: var(--pink);
-    --sidebar-primary-foreground: #0E0609;
+    --sidebar-primary: var(--terracotta);
+    --sidebar-primary-foreground: var(--on-terracotta);
     --sidebar-accent: var(--elevated);
     --sidebar-accent-foreground: var(--text);
     --sidebar-border: var(--border);
-    --sidebar-ring: var(--yellow);
+    --sidebar-ring: var(--gold);
   }
 
   * {
@@ -77,15 +75,15 @@
     font-family: 'JetBrains Mono', monospace;
   }
 
-  /* Focus ring in yellow with 2px offset */
+  /* Focus ring in gold with 2px offset */
   :focus-visible {
-    outline: 2px solid var(--yellow);
+    outline: 2px solid var(--gold);
     outline-offset: 2px;
   }
 
-  /* Text selection with pink accent */
+  /* Text selection with terracotta accent */
   ::selection {
-    background: rgba(255, 92, 154, 0.35);
+    background: rgba(217, 119, 79, 0.35);
     color: var(--text);
   }
 
@@ -112,33 +110,9 @@
     background: var(--text-3);
   }
 
-  /* Chat ambient glow (replaces doodle pattern) */
-  .chat-radial-glow {
+  /* Flat chat canvas */
+  .chat-canvas {
     background-color: var(--bg);
-    background-image: radial-gradient(600px circle at 50% 0%, rgba(159, 18, 57, 0.14), transparent 70%);
-  }
-
-  /* Animated AI indicator */
-  @keyframes pulse-accent {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
-  .animate-pulse-accent {
-    animation: pulse-accent 1.5s ease-in-out infinite;
-  }
-
-  /* Subtle grain texture overlay */
-  .bg-grain {
-    position: relative;
-  }
-  .bg-grain::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
-    opacity: 0.04;
-    pointer-events: none;
-    border-radius: inherit;
   }
 }
 

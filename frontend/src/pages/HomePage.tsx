@@ -163,26 +163,26 @@ export function HomePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0E0609] text-[#FFF1F5] relative overflow-x-hidden select-none">
+    <div className="min-h-screen flex flex-col bg-bg text-text relative overflow-x-hidden select-none">
       {/* ========================================================
           1. TOP BAR
           ======================================================== */}
-      <header className="relative w-full px-4 sm:px-8 py-4 flex justify-between items-center border-b border-[#3B1A27] bg-[#190B11]/85 backdrop-blur-md z-30">
+      <header className="relative w-full px-4 sm:px-8 py-4 flex justify-between items-center border-b border-border bg-surface/85 backdrop-blur-md z-30">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#9F1239] to-[#FF5C9A] flex items-center justify-center shadow-md shadow-[#9F1239]/30">
-            <span className="text-white font-bold text-sm">#</span>
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-terracotta to-rose flex items-center justify-center shadow-md shadow-terracotta/20">
+            <span className="text-on-terracotta font-bold text-sm">#</span>
           </div>
-          <span className="font-display font-bold text-lg tracking-tight text-[#FFF1F5]">
+          <span className="font-display font-bold text-lg tracking-tight text-text">
             EchoChat
           </span>
 
-          {/* Top Badge: Live Rooms (PRD L3) */}
-          <div className="ml-2 hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-[#251019] border border-[#3B1A27] text-xs">
+          {/* Top Badge: Live Rooms (PRD L3) - pulse in terracotta */}
+          <div className="ml-2 hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-elevated border border-border text-xs">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F43F5E] opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#F43F5E]" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-terracotta opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-terracotta" />
             </span>
-            <span className="font-medium text-[#C9A3B2]">
+            <span className="font-medium text-text-2">
               {publicRoomCount !== null
                 ? `${publicRoomCount} room${publicRoomCount === 1 ? '' : 's'} active now`
                 : 'Live Rooms Active'}
@@ -194,7 +194,7 @@ export function HomePage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/room')}
-            className="text-xs font-semibold px-3 py-1.5 rounded-lg text-[#C9A3B2] hover:text-[#FFF1F5] hover:bg-[#251019] transition-colors"
+            className="text-xs font-semibold px-3 py-1.5 rounded-lg text-text-2 hover:text-text hover:bg-elevated transition-colors"
           >
             Lobby
           </button>
@@ -202,7 +202,7 @@ export function HomePage() {
             href="https://github.com/MadhavMathur9/EchoChat"
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-2 text-xs font-semibold px-3.5 py-1.5 rounded-full bg-[#251019] hover:bg-[#3B1A27] border border-[#3B1A27] text-[#FFF1F5] hover:text-[#FF5C9A] transition-all active:scale-95 shadow-sm"
+            className="flex items-center gap-2 text-xs font-semibold px-3.5 py-1.5 rounded-full bg-elevated hover:bg-border/40 border border-border text-text hover:text-terracotta transition-all active:scale-95 shadow-sm"
           >
             <GithubIcon className="w-3.5 h-3.5" />
             <span>View Source</span>
@@ -221,20 +221,20 @@ export function HomePage() {
           transition={{ duration: 0.4 }}
           className="text-center mb-4"
         >
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#9F1239]/20 border border-[#FF5C9A]/30 text-xs font-semibold text-[#FF5C9A] tracking-wide shadow-sm">
-            <Sparkles className="w-3.5 h-3.5 text-yellow-400" />
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-terracotta/15 border border-terracotta/30 text-xs font-semibold text-terracotta tracking-wide shadow-sm">
+            <Sparkles className="w-3.5 h-3.5 text-gold" />
             Next-Gen Real-Time Chat with Google Gemini
           </span>
         </motion.div>
 
-        {/* Headline (PRD L2) */}
+        {/* Headline (PRD L2) - gradient from terracotta to rose to gold */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.08 }}
           className="text-center max-w-3xl mx-auto mb-6"
         >
-          <h1 className="font-display font-extrabold text-3xl sm:text-5xl md:text-6xl tracking-tight leading-[1.15]">
+          <h1 className="font-display font-extrabold text-3xl sm:text-5xl md:text-6xl tracking-tight leading-[1.15] text-text">
             Chat rooms that{' '}
             <span className="inline-block relative">
               <AnimatePresence mode="wait">
@@ -244,16 +244,16 @@ export function HomePage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -16 }}
                   transition={{ duration: 0.35, ease: 'easeOut' }}
-                  className="bg-gradient-to-r from-[#FF5C9A] to-[#FACC15] bg-clip-text text-transparent inline-block font-extrabold"
+                  className="bg-gradient-to-r from-terracotta via-rose to-gold bg-clip-text text-transparent inline-block font-extrabold"
                 >
                   {ROTATING_PHRASES[phraseIndex]}
                 </motion.span>
               </AnimatePresence>
             </span>
           </h1>
-          <p className="mt-4 text-sm sm:text-base text-[#C9A3B2] max-w-xl mx-auto leading-relaxed">
+          <p className="mt-4 text-sm sm:text-base text-text-2 max-w-xl mx-auto leading-relaxed">
             Ephemeral spaces with zero sign-up. Speak freely with your team or summon Google Gemini into any room using{' '}
-            <span className="text-yellow-400 font-mono font-semibold">@gemini</span>.
+            <span className="inline-block px-1.5 py-0.5 rounded bg-gold/15 text-gold font-mono font-semibold">@gemini</span>.
           </p>
         </motion.div>
 
@@ -266,21 +266,29 @@ export function HomePage() {
             transition={{ duration: 0.5, delay: 0.16 }}
             className="lg:col-span-5 space-y-4"
           >
-            {/* Create Room Card (PRD L5) */}
-            <div className="relative rounded-2xl bg-[#190B11]/90 backdrop-blur-xl border border-[#FF5C9A]/30 p-5 sm:p-6 shadow-2xl shadow-[#9F1239]/20">
+            {/* Create Room Card (PRD L5): Glass surface with 1px gradient border from terracotta to rose */}
+            <div
+              className="relative rounded-2xl bg-surface/85 backdrop-blur-xl p-5 sm:p-6 shadow-2xl"
+              style={{
+                border: '1px solid transparent',
+                backgroundImage: 'linear-gradient(var(--surface), var(--surface)), linear-gradient(135deg, var(--terracotta), var(--rose))',
+                backgroundOrigin: 'border-box',
+                backgroundClip: 'padding-box, border-box',
+              }}
+            >
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#9F1239] to-[#FF5C9A] flex items-center justify-center text-white shadow-sm">
+                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-terracotta to-rose flex items-center justify-center text-on-terracotta shadow-sm">
                   <Sparkles className="w-3.5 h-3.5" />
                 </div>
                 <div>
-                  <h2 className="font-display font-bold text-sm text-[#FFF1F5]">Create a Room</h2>
-                  <p className="text-[11px] text-[#8A6674]">Public or password protected</p>
+                  <h2 className="font-display font-bold text-sm text-text">Create a Room</h2>
+                  <p className="text-[11px] text-text-3">Public or password protected</p>
                 </div>
               </div>
 
               <form onSubmit={handleCreateRoom} className="space-y-3.5">
                 <div>
-                  <label className="text-[11px] font-semibold text-[#C9A3B2] block mb-1">
+                  <label className="text-[11px] font-semibold text-text-2 block mb-1">
                     Room Name
                   </label>
                   <input
@@ -288,26 +296,26 @@ export function HomePage() {
                     placeholder="e.g. Brainstorm Space"
                     value={roomName}
                     onChange={e => setRoomName(e.target.value)}
-                    className="w-full bg-[#251019] border border-[#3B1A27] rounded-xl px-3 py-2 text-xs text-[#FFF1F5] placeholder-[#8A6674] focus:outline-none focus:border-[#FF5C9A]/60 focus:ring-2 focus:ring-[#FACC15]/40"
+                    className="w-full bg-elevated border border-border rounded-xl px-3 py-2 text-xs text-text placeholder-text-3 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-surface transition-all"
                   />
                 </div>
 
-                <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#251019] border border-[#3B1A27]">
+                <div className="flex items-center justify-between p-2.5 rounded-xl bg-elevated border border-border">
                   <div className="flex items-center gap-2">
-                    <Lock className={`w-3.5 h-3.5 ${isPrivate ? 'text-[#FF5C9A]' : 'text-[#8A6674]'}`} />
-                    <span className="text-xs font-medium text-[#FFF1F5]">Private Room</span>
+                    <Lock className={`w-3.5 h-3.5 ${isPrivate ? 'text-terracotta' : 'text-text-3'}`} />
+                    <span className="text-xs font-medium text-text">Private Room</span>
                   </div>
                   <input
                     type="checkbox"
                     checked={isPrivate}
                     onChange={e => setIsPrivate(e.target.checked)}
-                    className="w-4 h-4 accent-[#FF5C9A] cursor-pointer rounded"
+                    className="w-4 h-4 accent-terracotta cursor-pointer rounded"
                   />
                 </div>
 
                 {isPrivate && (
                   <div>
-                    <label className="text-[11px] font-semibold text-[#C9A3B2] block mb-1">
+                    <label className="text-[11px] font-semibold text-text-2 block mb-1">
                       Passcode
                     </label>
                     <input
@@ -316,17 +324,17 @@ export function HomePage() {
                       value={password}
                       onChange={e => setPassword(e.target.value)}
                       required={isPrivate}
-                      className="w-full bg-[#251019] border border-[#3B1A27] rounded-xl px-3 py-2 text-xs text-[#FFF1F5] placeholder-[#8A6674] focus:outline-none focus:border-[#FF5C9A]/60 focus:ring-2 focus:ring-[#FACC15]/40"
+                      className="w-full bg-elevated border border-border rounded-xl px-3 py-2 text-xs text-text placeholder-text-3 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-surface transition-all"
                     />
                   </div>
                 )}
 
                 <div className="flex items-center justify-between">
-                  <label className="text-[11px] font-semibold text-[#C9A3B2]">Max Users</label>
+                  <label className="text-[11px] font-semibold text-text-2">Max Users</label>
                   <select
                     value={maxUsers}
                     onChange={e => setMaxUsers(Number(e.target.value))}
-                    className="bg-[#251019] border border-[#3B1A27] rounded-xl px-3 py-1.5 text-xs text-[#FFF1F5] focus:outline-none focus:border-[#FF5C9A]/60 focus:ring-1 focus:ring-[#FACC15]/40 cursor-pointer"
+                    className="bg-elevated border border-border rounded-xl px-3 py-1.5 text-xs text-text focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-surface cursor-pointer"
                   >
                     <option value={2}>2 Users</option>
                     <option value={5}>5 Users</option>
@@ -336,11 +344,11 @@ export function HomePage() {
                   </select>
                 </div>
 
-                {/* Primary CTA Button: brightest on page with soft pink glow (PRD L5) */}
+                {/* Primary CTA Button: terracotta background with on-terracotta text */}
                 <button
                   type="submit"
                   disabled={isCreating}
-                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#FF5C9A] to-[#F43F5E] hover:shadow-[0_0_24px_rgba(255,92,154,0.45)] text-white text-xs font-bold transition-all active:scale-95 shadow-lg shadow-[#9F1239]/40 flex items-center justify-center gap-1.5 disabled:opacity-60"
+                  className="w-full py-2.5 rounded-xl bg-terracotta hover:bg-[#E28B65] active:bg-[#C56842] text-on-terracotta text-xs font-bold transition-all active:scale-95 shadow-md flex items-center justify-center gap-1.5 disabled:bg-elevated disabled:text-text-3 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-surface"
                 >
                   <span>{isCreating ? 'Creating Room...' : 'Create Room'}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -349,9 +357,9 @@ export function HomePage() {
             </div>
 
             {/* Join Room Card (PRD L6) */}
-            <div className="rounded-2xl bg-[#190B11]/70 border border-[#3B1A27] p-4 space-y-3">
+            <div className="rounded-2xl bg-surface/85 backdrop-blur-md border border-border p-4 space-y-3">
               <form onSubmit={handleJoinRoom} className="space-y-2">
-                <label className="text-[11px] font-semibold text-[#C9A3B2] block">
+                <label className="text-[11px] font-semibold text-text-2 block">
                   Have an invite ID?
                 </label>
                 <div className="flex gap-2">
@@ -360,12 +368,12 @@ export function HomePage() {
                     placeholder="Paste Room ID..."
                     value={joinRoomId}
                     onChange={e => setJoinRoomId(e.target.value)}
-                    className="flex-1 bg-[#251019] border border-[#3B1A27] rounded-xl px-3 py-1.5 text-xs text-[#FFF1F5] placeholder-[#8A6674] focus:outline-none focus:border-[#FF5C9A]/60"
+                    className="flex-1 bg-elevated border border-border rounded-xl px-3 py-1.5 text-xs text-text placeholder-text-3 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-surface transition-all"
                   />
                   <button
                     type="submit"
                     disabled={!joinRoomId.trim()}
-                    className="px-4 py-1.5 rounded-xl bg-[#251019] hover:bg-[#3B1A27] border border-[#3B1A27] text-[#FFF1F5] hover:text-[#FF5C9A] text-xs font-semibold transition-all active:scale-95 disabled:opacity-40"
+                    className="px-4 py-1.5 rounded-xl bg-terracotta hover:bg-[#E28B65] active:bg-[#C56842] text-on-terracotta text-xs font-semibold transition-all active:scale-95 disabled:bg-elevated disabled:text-text-3 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-surface"
                   >
                     Join
                   </button>
@@ -374,8 +382,8 @@ export function HomePage() {
 
               {/* Recent Rooms list for returning users (PRD L6) */}
               {joinedRooms.length > 0 && (
-                <div className="pt-2 border-t border-[#3B1A27]/60">
-                  <span className="text-[10px] font-semibold text-[#8A6674] uppercase tracking-wider block mb-1.5">
+                <div className="pt-2 border-t border-border/60">
+                  <span className="text-[10px] font-semibold text-text-3 uppercase tracking-wider block mb-1.5">
                     Recent Rooms
                   </span>
                   <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto scrollbar-thin">
@@ -383,7 +391,7 @@ export function HomePage() {
                       <button
                         key={r.roomId}
                         onClick={() => navigate(`/room/${r.roomId}`)}
-                        className="px-2.5 py-1 rounded-lg bg-[#251019] hover:bg-[#3B1A27] border border-[#3B1A27] text-[11px] text-[#C9A3B2] hover:text-[#FFF1F5] transition-colors truncate max-w-[150px]"
+                        className="px-2.5 py-1 rounded-lg bg-elevated hover:bg-border/40 border border-border text-[11px] text-text-2 hover:text-text transition-colors truncate max-w-[150px]"
                       >
                         # {r.name}
                       </button>
@@ -402,57 +410,57 @@ export function HomePage() {
             className="lg:col-span-7 relative"
           >
             {/* Floating chips (PRD L4) */}
-            <div className="absolute -top-3 right-6 z-20 hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#190B11]/90 border border-green-500/30 text-green-400 text-xs font-semibold shadow-lg shadow-black/40">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            <div className="absolute -top-3 right-6 z-20 hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface/90 border border-online/30 text-online text-xs font-semibold shadow-lg shadow-black/40">
+              <span className="w-2 h-2 rounded-full bg-online animate-pulse" />
               <span>3 online</span>
             </div>
 
-            <div className="absolute -bottom-3 left-6 z-20 hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#190B11]/90 border border-yellow-400/30 text-yellow-300 text-xs font-semibold shadow-lg shadow-black/40">
-              <Sparkles className="w-3.5 h-3.5 text-yellow-400" />
+            <div className="absolute -bottom-3 left-6 z-20 hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface/90 border border-gold/30 text-gold text-xs font-semibold shadow-lg shadow-black/40">
+              <Sparkles className="w-3.5 h-3.5 text-gold" />
               <span>AI Augmentation Active</span>
             </div>
 
             {/* Tilted Mock Chat Window */}
-            <div className="rounded-2xl bg-[#190B11]/95 border border-[#3B1A27] shadow-2xl shadow-black/60 overflow-hidden transform lg:rotate-1 hover:rotate-0 transition-transform duration-500">
+            <div className="rounded-2xl bg-surface border border-border shadow-2xl shadow-black/60 overflow-hidden transform lg:rotate-1 hover:rotate-0 transition-transform duration-500">
               {/* Window Header */}
-              <div className="px-4 py-3 bg-[#190B11] border-b border-[#3B1A27] flex items-center justify-between">
+              <div className="px-4 py-3 bg-surface border-b border-border flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="flex gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-red-500/80 inline-block" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/80 inline-block" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-green-500/80 inline-block" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-burgundy/80 inline-block" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-gold/80 inline-block" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-online/80 inline-block" />
                   </div>
-                  <span className="text-xs font-semibold text-[#FFF1F5] ml-2"># engineering-lounge</span>
+                  <span className="text-xs font-semibold text-text ml-2"># engineering-lounge</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-[10px] text-green-400 font-medium">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                <div className="flex items-center gap-1.5 text-[10px] text-online font-medium">
+                  <span className="w-1.5 h-1.5 rounded-full bg-online" />
                   <span>connected</span>
                 </div>
               </div>
 
-              {/* Message Feed Canvas */}
-              <div className="p-4 space-y-3 min-h-[300px] flex flex-col justify-end chat-radial-glow select-text">
+              {/* Message Feed Canvas: flat bg-bg */}
+              <div className="p-4 space-y-3 min-h-[300px] flex flex-col justify-end bg-bg select-text">
                 {/* Scripted Message 1: Human User */}
                 <div className="flex gap-2.5 items-end justify-start">
-                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#9F1239] to-[#FF5C9A] flex items-center justify-center text-white text-xs font-bold shrink-0">
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-terracotta to-rose flex items-center justify-center text-text text-xs font-bold shrink-0">
                     A
                   </div>
-                  <div className="max-w-[80%] px-3 py-2 rounded-2xl rounded-tl-sm bg-[#251019] border border-[#3B1A27] text-xs">
-                    <span className="text-[10px] font-semibold text-[#FF5C9A] block mb-0.5">Alex</span>
-                    <p className="text-[#FFF1F5]">
+                  <div className="max-w-[80%] px-3 py-2 rounded-2xl rounded-tl-sm bg-elevated border border-border text-xs">
+                    <span className="text-[10px] font-semibold text-terracotta block mb-0.5">Alex</span>
+                    <p className="text-text">
                       Hey! How do Java virtual threads handle millions of concurrent connections?
                     </p>
                   </div>
                 </div>
 
-                {/* Scripted Message 2: Self mention */}
+                {/* Scripted Message 2: Self mention - sage background with text */}
                 <div className="flex gap-2.5 items-end justify-start flex-row-reverse">
-                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#BE185D] to-[#F43F5E] flex items-center justify-center text-white text-xs font-bold shrink-0">
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-sage to-online flex items-center justify-center text-text text-xs font-bold shrink-0">
                     M
                   </div>
-                  <div className="max-w-[80%] px-3 py-2 rounded-2xl rounded-tr-sm bg-gradient-to-r from-[#9F1239] to-[#BE185D] text-white text-xs shadow-md">
+                  <div className="max-w-[80%] px-3 py-2 rounded-2xl rounded-tr-sm bg-sage text-text text-xs shadow-md">
                     <p>
-                      Let's check with AI: <span className="text-yellow-300 font-semibold font-mono">@gemini</span> explain virtual threads architecture
+                      Let's check with AI: <span className="inline-block px-1.5 py-0.5 rounded bg-gold/15 text-gold font-semibold font-mono">@gemini</span> explain virtual threads architecture
                     </p>
                   </div>
                 </div>
@@ -460,15 +468,15 @@ export function HomePage() {
                 {/* Scripted Message 3: Gemini thinking / response based on loop step */}
                 {previewStep >= 1 && previewStep < 2 && (
                   <div className="flex gap-2.5 items-end">
-                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#3B82F6] to-[#60A5FA] flex items-center justify-center text-white shadow-sm shrink-0">
-                      <Sparkles className="w-3.5 h-3.5" />
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#6F9BE0] to-[#9DBDF0] flex items-center justify-center text-white shadow-sm shrink-0">
+                      <Sparkles className="w-3.5 h-3.5 text-white" />
                     </div>
-                    <div className="bg-[#0F1424] border border-blue-500/35 px-3 py-2 rounded-2xl rounded-tl-sm text-xs text-[#7FB0FF] flex items-center gap-2">
+                    <div className="bg-[#1B2333] border border-[rgba(127,168,232,0.35)] shadow-[0_0_24px_rgba(127,168,232,0.08)] px-3 py-2 rounded-2xl rounded-tl-sm text-xs text-blue flex items-center gap-2">
                       <span>Gemini is thinking</span>
                       <span className="inline-flex gap-1">
-                        <span className="w-1 h-1 rounded-full bg-blue-400 animate-bounce" />
-                        <span className="w-1 h-1 rounded-full bg-blue-400 animate-bounce delay-100" />
-                        <span className="w-1 h-1 rounded-full bg-blue-400 animate-bounce delay-200" />
+                        <span className="w-1 h-1 rounded-full bg-blue animate-bounce" />
+                        <span className="w-1 h-1 rounded-full bg-blue animate-bounce delay-100" />
+                        <span className="w-1 h-1 rounded-full bg-blue animate-bounce delay-200" />
                       </span>
                     </div>
                   </div>
@@ -480,12 +488,12 @@ export function HomePage() {
                     animate={{ opacity: 1, y: 0 }}
                     className="flex gap-2.5 items-end"
                   >
-                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#3B82F6] to-[#60A5FA] flex items-center justify-center text-white shadow-sm shrink-0">
-                      <Sparkles className="w-3.5 h-3.5" />
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#6F9BE0] to-[#9DBDF0] flex items-center justify-center text-white shadow-sm shrink-0">
+                      <Sparkles className="w-3.5 h-3.5 text-white" />
                     </div>
-                    <div className="max-w-[85%] px-3.5 py-2.5 rounded-2xl rounded-tl-sm bg-[#0F1424] border border-blue-500/35 text-xs text-[#E2E8F0] shadow-[0_0_24px_rgba(79,142,247,0.12)]">
-                      <span className="text-[11px] font-semibold text-[#7FB0FF] flex items-center gap-1 mb-1">
-                        <Sparkles className="w-3 h-3 text-yellow-400" />
+                    <div className="max-w-[85%] px-3.5 py-2.5 rounded-2xl rounded-tl-sm bg-[#1B2333] border border-[rgba(127,168,232,0.35)] text-xs text-text shadow-[0_0_24px_rgba(127,168,232,0.08)]">
+                      <span className="text-[11px] font-semibold text-blue flex items-center gap-1 mb-1">
+                        <Sparkles className="w-3 h-3 text-gold" />
                         ✦ Gemini
                       </span>
                       <p className="leading-relaxed">
@@ -497,12 +505,12 @@ export function HomePage() {
               </div>
 
               {/* Mock Chat Input Footer */}
-              <div className="p-3 bg-[#190B11] border-t border-[#3B1A27] flex items-center gap-2">
-                <div className="flex-1 bg-[#251019] border border-[#3B1A27] rounded-xl px-3 py-1.5 text-xs text-[#8A6674] flex items-center justify-between">
+              <div className="p-3 bg-surface border-t border-border flex items-center gap-2">
+                <div className="flex-1 bg-elevated border border-border rounded-xl px-3 py-1.5 text-xs text-text-3 flex items-center justify-between">
                   <span>Type a message or use @gemini...</span>
-                  <Sparkles className="w-3.5 h-3.5 text-yellow-400/60" />
+                  <Sparkles className="w-3.5 h-3.5 text-gold/60" />
                 </div>
-                <div className="w-7 h-7 rounded-lg bg-gradient-to-r from-[#FF5C9A] to-[#F43F5E] flex items-center justify-center text-white">
+                <div className="w-7 h-7 rounded-lg bg-terracotta flex items-center justify-center text-on-terracotta">
                   <Send className="w-3.5 h-3.5" />
                 </div>
               </div>
@@ -514,57 +522,57 @@ export function HomePage() {
       {/* ========================================================
           3. BENEFITS BENTO GRID (PRD L7)
           ======================================================== */}
-      <section className="relative px-4 sm:px-8 py-16 max-w-6xl mx-auto w-full border-t border-[#3B1A27]/60 z-10">
+      <section className="relative px-4 sm:px-8 py-16 max-w-6xl mx-auto w-full border-t border-border/60 z-10">
         <div className="text-center max-w-xl mx-auto mb-10">
-          <span className="text-xs font-semibold text-[#FF5C9A] uppercase tracking-wider block mb-1">
+          <span className="text-xs font-semibold text-terracotta uppercase tracking-wider block mb-1">
             Engineered for Precision
           </span>
-          <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-[#FFF1F5]">
+          <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-text">
             Everything a conversation needs. Nothing it doesn't.
           </h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Bento Card 1: Large Card - Ask Gemini Anywhere with Mini Demo */}
-          <div className="md:col-span-2 rounded-2xl bg-[#190B11]/80 border border-[#3B1A27] hover:border-[#FF5C9A]/40 p-6 shadow-xl transition-all duration-300 hover:-translate-y-1 group">
+          <div className="md:col-span-2 rounded-2xl bg-surface border border-border hover:border-blue/50 p-6 shadow-xl transition-all duration-300 hover:-translate-y-1 group">
             <div className="flex items-center justify-between mb-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#3B82F6]/20 to-[#60A5FA]/20 border border-blue-500/30 flex items-center justify-center text-[#60A5FA]">
-                <Sparkles className="w-5 h-5 text-yellow-400" />
+              <div className="w-10 h-10 rounded-xl bg-[#1B2333] border border-[rgba(127,168,232,0.35)] flex items-center justify-center text-blue shadow-[0_0_24px_rgba(127,168,232,0.08)]">
+                <Sparkles className="w-5 h-5 text-gold" />
               </div>
-              <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-300 border border-blue-500/20">
+              <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-blue/15 text-blue border border-blue/30">
                 AI Signature Feature
               </span>
             </div>
-            <h3 className="font-display font-bold text-lg text-[#FFF1F5] mb-1">
+            <h3 className="font-display font-bold text-lg text-text mb-1">
               Ask Gemini anywhere
             </h3>
-            <p className="text-xs text-[#C9A3B2] max-w-lg mb-4 leading-relaxed">
-              Type <span className="text-yellow-400 font-mono font-semibold">@gemini</span> in any conversation.
+            <p className="text-xs text-text-2 max-w-lg mb-4 leading-relaxed">
+              Type <span className="inline-block px-1.5 py-0.5 rounded bg-gold/15 text-gold font-mono font-semibold">@gemini</span> in any conversation.
               The AI joins with real-time markdown, code formatting, and context-aware responses.
             </p>
 
             {/* Interactive Mini Demo inside card */}
-            <form onSubmit={handleRunMiniDemo} className="mt-4 p-3 rounded-xl bg-[#251019] border border-[#3B1A27] space-y-2.5">
+            <form onSubmit={handleRunMiniDemo} className="mt-4 p-3 rounded-xl bg-elevated border border-border space-y-2.5">
               <div className="flex gap-2">
                 <input
                   type="text"
                   value={demoPrompt}
                   onChange={e => setDemoPrompt(e.target.value)}
-                  className="flex-1 bg-[#190B11] border border-[#3B1A27] rounded-lg px-3 py-1.5 text-xs text-[#FFF1F5] focus:outline-none focus:border-[#FF5C9A]/60"
+                  className="flex-1 bg-surface border border-border rounded-lg px-3 py-1.5 text-xs text-text placeholder-text-3 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-elevated transition-all"
                   placeholder="@gemini ask something..."
                 />
                 <button
                   type="submit"
                   disabled={demoIsTyping}
-                  className="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-[#FF5C9A] to-[#F43F5E] text-white text-xs font-semibold hover:opacity-95 transition-all active:scale-95 disabled:opacity-50"
+                  className="px-3.5 py-1.5 rounded-lg bg-terracotta hover:bg-[#E28B65] active:bg-[#C56842] text-on-terracotta text-xs font-semibold transition-all active:scale-95 disabled:bg-elevated disabled:text-text-3 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-gold"
                 >
                   {demoIsTyping ? 'Thinking...' : 'Try Demo'}
                 </button>
               </div>
 
               {demoResponse && (
-                <div className="p-2.5 rounded-lg bg-[#0F1424] border border-blue-500/30 text-[11px] text-[#E2E8F0] leading-relaxed">
-                  <span className="text-[10px] font-bold text-[#7FB0FF] block mb-0.5">✦ Live Demo Output:</span>
+                <div className="p-2.5 rounded-lg bg-[#1B2333] border border-[rgba(127,168,232,0.35)] text-[11px] text-text leading-relaxed shadow-[0_0_24px_rgba(127,168,232,0.08)]">
+                  <span className="text-[10px] font-bold text-blue block mb-0.5">✦ Live Demo Output:</span>
                   {demoResponse}
                 </div>
               )}
@@ -572,40 +580,40 @@ export function HomePage() {
           </div>
 
           {/* Bento Card 2: Medium Card - Instant Messaging */}
-          <div className="rounded-2xl bg-[#190B11]/80 border border-[#3B1A27] hover:border-[#FF5C9A]/40 p-6 shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <div className="w-10 h-10 rounded-xl bg-[#9F1239]/20 border border-[#FF5C9A]/30 flex items-center justify-center text-[#FF5C9A] mb-4">
+          <div className="rounded-2xl bg-surface border border-border hover:border-terracotta/50 p-6 shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div className="w-10 h-10 rounded-xl bg-terracotta/15 border border-terracotta/30 flex items-center justify-center text-terracotta mb-4">
               <Zap className="w-5 h-5" />
             </div>
-            <h3 className="font-display font-bold text-lg text-[#FFF1F5] mb-1">
+            <h3 className="font-display font-bold text-lg text-text mb-1">
               Instant
             </h3>
-            <p className="text-xs text-[#C9A3B2] leading-relaxed">
+            <p className="text-xs text-text-2 leading-relaxed">
               Sub-millisecond WebSocket & STOMP dispatch over Java 21 Virtual Threads. Zero polling, zero lag, smooth real-time delivery.
             </p>
           </div>
 
           {/* Bento Card 3: Medium Card - Self Cleaning Rooms */}
-          <div className="rounded-2xl bg-[#190B11]/80 border border-[#3B1A27] hover:border-[#FF5C9A]/40 p-6 shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <div className="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center text-yellow-400 mb-4">
+          <div className="rounded-2xl bg-surface border border-border hover:border-gold/50 p-6 shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div className="w-10 h-10 rounded-xl bg-gold/15 border border-gold/30 flex items-center justify-center text-gold mb-4">
               <Trash2 className="w-5 h-5" />
             </div>
-            <h3 className="font-display font-bold text-lg text-[#FFF1F5] mb-1">
+            <h3 className="font-display font-bold text-lg text-text mb-1">
               Vanishes when you leave
             </h3>
-            <p className="text-xs text-[#C9A3B2] leading-relaxed">
+            <p className="text-xs text-text-2 leading-relaxed">
               Ephemeral by design. Rooms dissolve and purge automatically after 10 minutes of complete inactivity. Nothing is stored forever.
             </p>
           </div>
 
           {/* Bento Card 4: Medium Card - Locked when needed */}
-          <div className="md:col-span-2 rounded-2xl bg-[#190B11]/80 border border-[#3B1A27] hover:border-[#FF5C9A]/40 p-6 shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <div className="w-10 h-10 rounded-xl bg-[#9F1239]/20 border border-[#FF5C9A]/30 flex items-center justify-center text-[#FF5C9A] mb-4">
+          <div className="md:col-span-2 rounded-2xl bg-surface border border-border hover:border-rose/50 p-6 shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div className="w-10 h-10 rounded-xl bg-rose/15 border border-rose/30 flex items-center justify-center text-rose mb-4">
               <Lock className="w-5 h-5" />
             </div>
-            <h3 className="font-display font-bold text-lg text-[#FFF1F5] mb-1">
+            <h3 className="font-display font-bold text-lg text-text mb-1">
               Locked when you need it
             </h3>
-            <p className="text-xs text-[#C9A3B2] leading-relaxed">
+            <p className="text-xs text-text-2 leading-relaxed">
               Create password-protected rooms with a single toggle. Only users with the secret passcode and invite ID can join and read messages.
             </p>
           </div>
@@ -615,12 +623,12 @@ export function HomePage() {
       {/* ========================================================
           4. HOW IT WORKS (PRD L8)
           ======================================================== */}
-      <section className="relative px-4 sm:px-8 py-16 max-w-6xl mx-auto w-full border-t border-[#3B1A27]/60 z-10">
+      <section className="relative px-4 sm:px-8 py-16 max-w-6xl mx-auto w-full border-t border-border/60 z-10">
         <div className="text-center max-w-xl mx-auto mb-12">
-          <span className="text-xs font-semibold text-[#FF5C9A] uppercase tracking-wider block mb-1">
+          <span className="text-xs font-semibold text-terracotta uppercase tracking-wider block mb-1">
             Simple 3-Step Flow
           </span>
-          <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-[#FFF1F5]">
+          <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-text">
             How EchoChat Works
           </h2>
         </div>
@@ -645,16 +653,16 @@ export function HomePage() {
           ].map((item, i) => (
             <div
               key={i}
-              className="relative p-6 rounded-2xl bg-[#190B11] border border-[#3B1A27] shadow-lg flex flex-col justify-between"
+              className="relative p-6 rounded-2xl bg-surface border border-border hover:border-sage/50 shadow-lg flex flex-col justify-between transition-colors"
             >
               <div>
-                <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#9F1239]/20 border border-[#FF5C9A]/30 text-[#FF5C9A] text-xs font-bold mb-3">
+                <span className="inline-block px-2.5 py-0.5 rounded-full bg-elevated border border-border text-terracotta text-xs font-bold mb-3">
                   {item.step}
                 </span>
-                <h3 className="font-display font-bold text-base text-[#FFF1F5] mb-1.5">
+                <h3 className="font-display font-bold text-base text-text mb-1.5">
                   {item.title}
                 </h3>
-                <p className="text-xs text-[#C9A3B2] leading-relaxed">{item.desc}</p>
+                <p className="text-xs text-text-2 leading-relaxed">{item.desc}</p>
               </div>
             </div>
           ))}
@@ -664,16 +672,16 @@ export function HomePage() {
       {/* ========================================================
           5. TECH STRIP (PRD L9)
           ======================================================== */}
-      <section className="relative py-8 bg-[#190B11]/50 border-y border-[#3B1A27] overflow-hidden z-10">
+      <section className="relative py-8 bg-surface/50 border-y border-border overflow-hidden z-10">
         <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center gap-4 justify-between">
-          <span className="text-xs font-semibold text-[#8A6674] uppercase tracking-wider shrink-0">
+          <span className="text-xs font-semibold text-text-3 uppercase tracking-wider shrink-0">
             Powered by modern architecture:
           </span>
           <div className="flex flex-wrap items-center gap-2 justify-center">
             {TECH_STACK.map(tech => (
               <span
                 key={tech}
-                className="px-3 py-1 rounded-full bg-[#251019] border border-[#3B1A27] text-[11px] font-medium text-[#C9A3B2]"
+                className="px-3 py-1 rounded-full bg-elevated border border-border text-[11px] font-medium text-text-2"
               >
                 {tech}
               </span>
@@ -686,11 +694,11 @@ export function HomePage() {
           6. FINAL CALL TO ACTION (PRD L10)
           ======================================================== */}
       <section className="relative px-4 sm:px-8 py-20 max-w-4xl mx-auto w-full text-center z-10">
-        <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-b from-[#190B11] to-[#251019] border border-[#FF5C9A]/30 shadow-2xl shadow-[#9F1239]/20">
-          <h2 className="font-display font-extrabold text-2xl sm:text-4xl text-[#FFF1F5] mb-3">
+        <div className="p-8 sm:p-12 rounded-3xl bg-surface border border-border shadow-2xl shadow-black/40">
+          <h2 className="font-display font-extrabold text-2xl sm:text-4xl text-text mb-3">
             Ready to start a conversation?
           </h2>
-          <p className="text-xs sm:text-sm text-[#C9A3B2] max-w-md mx-auto mb-6 leading-relaxed">
+          <p className="text-xs sm:text-sm text-text-2 max-w-md mx-auto mb-6 leading-relaxed">
             No signup. No tracking. Pure real-time chat with Google Gemini AI.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
@@ -698,13 +706,13 @@ export function HomePage() {
               onClick={() => {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#FF5C9A] to-[#F43F5E] text-white text-xs font-bold hover:shadow-[0_0_24px_rgba(255,92,154,0.4)] transition-all active:scale-95 shadow-md"
+              className="px-6 py-2.5 rounded-full bg-terracotta hover:bg-[#E28B65] active:bg-[#C56842] text-on-terracotta text-xs font-bold transition-all active:scale-95 shadow-md focus:outline-none focus:ring-2 focus:ring-gold"
             >
               Spin Up a Room
             </button>
             <button
               onClick={() => navigate('/room')}
-              className="px-6 py-2.5 rounded-full bg-[#251019] hover:bg-[#3B1A27] border border-[#3B1A27] text-[#FFF1F5] text-xs font-bold transition-all active:scale-95"
+              className="px-6 py-2.5 rounded-full bg-elevated hover:bg-border/40 border border-border text-text hover:text-terracotta text-xs font-bold transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-gold"
             >
               Browse Public Lobby
             </button>
@@ -715,7 +723,7 @@ export function HomePage() {
       {/* ========================================================
           7. FOOTER (PRD L10)
           ======================================================== */}
-      <footer className="relative w-full py-6 px-4 sm:px-8 border-t border-[#3B1A27] bg-[#0E0609] text-center text-xs text-[#8A6674] z-10">
+      <footer className="relative w-full py-6 px-4 sm:px-8 border-t border-border bg-surface text-center text-xs text-text-3 z-10">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
           <p>© {new Date().getFullYear()} EchoChat. Built by Madhav Mathur.</p>
           <div className="flex items-center gap-4">
@@ -723,14 +731,14 @@ export function HomePage() {
               href="https://github.com/MadhavMathur9/EchoChat"
               target="_blank"
               rel="noreferrer"
-              className="hover:text-[#FF5C9A] transition-colors flex items-center gap-1"
+              className="hover:text-terracotta transition-colors flex items-center gap-1"
             >
               <GithubIcon className="w-3.5 h-3.5" />
               <span>GitHub</span>
             </a>
-            <span className="text-[#3B1A27]">•</span>
+            <span className="text-border">•</span>
             <span>Google Gemini 1.5</span>
-            <span className="text-[#3B1A27]">•</span>
+            <span className="text-border">•</span>
             <span>Netlify Deployed</span>
           </div>
         </div>

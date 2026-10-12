@@ -6,13 +6,12 @@ interface AvatarProps {
   size?: 'sm' | 'md';
 }
 
-// Deterministic gradient from username
+// User gradient pairs cycling through palette tokens
 const userGradients = [
-  'from-[#9F1239] to-[#FF5C9A]',
-  'from-[#BE185D] to-[#F43F5E]',
-  'from-[#881337] to-[#BE185D]',
-  'from-[#E11D48] to-[#FB7185]',
-  'from-[#9F1239] to-[#E11D48]',
+  'from-[#D9774F] to-[#E88CA5]', // Terracotta to Rose
+  'from-[#2E5A44] to-[#5FBF8A]', // Sage to Online
+  'from-[#8C2F45] to-[#D9774F]', // Burgundy to Terracotta
+  'from-[#E3B94F] to-[#D9774F]', // Gold to Terracotta
 ];
 
 function getGradient(name: string): string {
@@ -27,12 +26,11 @@ export function Avatar({ senderType, name, size = 'md' }: AvatarProps) {
   if (senderType === 'GEMINI') {
     return (
       <div
-        className={`${dim} rounded-full flex items-center justify-center bg-gradient-to-br from-[#3B82F6] to-[#60A5FA] text-white shrink-0 shadow-[0_0_14px_rgba(79,142,247,0.35)] border border-blue-400/40 relative`}
+        className={`${dim} rounded-full flex items-center justify-center bg-gradient-to-br from-[#6F9BE0] to-[#9DBDF0] text-white shrink-0 shadow-[0_0_14px_rgba(127,168,232,0.3)] border border-[#9DBDF0]/40`}
         title="Google Gemini AI"
         aria-label="Gemini AI Avatar"
       >
         <Sparkles className="w-4 h-4 text-white" />
-        <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-yellow-400 border border-[#0E0609]" />
       </div>
     );
   }
@@ -42,7 +40,7 @@ export function Avatar({ senderType, name, size = 'md' }: AvatarProps) {
 
   return (
     <div
-      className={`${dim} rounded-full flex items-center justify-center bg-gradient-to-br ${grad} text-white font-semibold shrink-0 shadow-sm border border-white/10`}
+      className={`${dim} rounded-full flex items-center justify-center bg-gradient-to-br ${grad} text-text font-semibold shrink-0 shadow-sm border border-border/40`}
       title={name}
       aria-label={`${name}'s avatar`}
     >

@@ -29,13 +29,14 @@ import type { RoomMetadataResponse } from '../types';
 import toast from 'react-hot-toast';
 import { apiFetch } from '@/lib/api';
 
-// Deterministic room gradient cycling through PRD 7.6 pairs:
+// Deterministic room gradient cycling through palette pairs:
+// #D9774F to #E88CA5, #2E5A44 to #5FBF8A, #8C2F45 to #D9774F, #E3B94F to #D9774F, #7FA8E8 to #2E5A44
 const roomGradientPairs = [
-  'from-[#FF5C9A] to-[#F43F5E]',
-  'from-[#9F1239] to-[#FF5C9A]',
-  'from-[#FACC15] to-[#F43F5E]',
-  'from-[#3B82F6] to-[#9F1239]',
-  'from-[#F43F5E] to-[#FACC15]',
+  'from-[#D9774F] to-[#E88CA5]', // Terracotta to Rose
+  'from-[#2E5A44] to-[#5FBF8A]', // Sage to Online
+  'from-[#8C2F45] to-[#D9774F]', // Burgundy to Terracotta
+  'from-[#E3B94F] to-[#D9774F]', // Gold to Terracotta
+  'from-[#7FA8E8] to-[#2E5A44]', // Blue to Sage
 ];
 
 function getRoomGradient(name: string): string {
@@ -323,29 +324,29 @@ export function RoomPage() {
   );
 
   return (
-    <div className="flex h-screen bg-[#0E0609] overflow-hidden p-2 sm:p-3 md:p-4 gap-3 select-none">
+    <div className="flex h-screen bg-bg overflow-hidden p-2 sm:p-3 md:p-4 gap-3 select-none">
       {/* ========================================================
           1. UNIFIED LEFT SIDEBAR (Your Rooms + Discover)
           ======================================================== */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-72 sm:w-80 bg-[#190B11] border-r border-[#3B1A27] flex flex-col transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 lg:rounded-2xl lg:border lg:shadow-2xl lg:shadow-[#9F1239]/10 ${
+        className={`fixed inset-y-0 left-0 z-40 w-72 sm:w-80 bg-surface border-r border-border flex flex-col transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 lg:rounded-2xl lg:border lg:shadow-2xl shadow-black/20 ${
           isMobileSidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'
         }`}
       >
         {/* Sidebar Header */}
-        <div className="p-3.5 border-b border-[#3B1A27] flex items-center justify-between shrink-0">
+        <div className="p-3.5 border-b border-border flex items-center justify-between shrink-0">
           <div
             onClick={() => navigate('/')}
             className="flex items-center gap-2.5 cursor-pointer group"
           >
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#9F1239] to-[#FF5C9A] flex items-center justify-center shadow-md">
-              <span className="text-white font-bold text-xs">#</span>
+            <div className="w-7 h-7 rounded-lg bg-terracotta flex items-center justify-center shadow-md">
+              <span className="text-on-terracotta font-bold text-xs">#</span>
             </div>
             <div>
-              <h1 className="font-display font-bold text-base text-[#FFF1F5] group-hover:text-[#FF5C9A] transition-colors leading-tight">
+              <h1 className="font-display font-bold text-base text-text group-hover:text-terracotta transition-colors leading-tight">
                 EchoChat
               </h1>
-              <span className="text-[10px] text-[#8A6674] tracking-wide block">Real-time AI Rooms</span>
+              <span className="text-[10px] text-text-3 tracking-wide block">Real-time AI Rooms</span>
             </div>
           </div>
 
@@ -353,7 +354,7 @@ export function RoomPage() {
             <button
               onClick={() => setIsCreateModalOpen(true)}
               aria-label="Create new room"
-              className="w-8 h-8 rounded-lg bg-[#251019] hover:bg-[#3B1A27] border border-[#3B1A27] flex items-center justify-center text-[#FF5C9A] hover:text-[#FFF1F5] transition-all active:scale-95 shadow-sm"
+              className="w-8 h-8 rounded-lg bg-elevated hover:bg-surface border border-border flex items-center justify-center text-terracotta hover:text-text transition-all active:scale-95 shadow-sm"
               title="Create Room"
             >
               <Plus className="w-4 h-4" />
@@ -361,7 +362,7 @@ export function RoomPage() {
             <button
               onClick={() => setIsMobileSidebarOpen(false)}
               aria-label="Close sidebar"
-              className="lg:hidden w-8 h-8 rounded-lg text-[#8A6674] hover:text-white flex items-center justify-center"
+              className="lg:hidden w-8 h-8 rounded-lg text-text-3 hover:text-text flex items-center justify-center"
             >
               <X className="w-4 h-4" />
             </button>
@@ -370,13 +371,13 @@ export function RoomPage() {
 
         {/* Tab Toggle: Your Rooms vs Discover */}
         <div className="px-3 pt-3 pb-2 shrink-0">
-          <div className="grid grid-cols-2 p-1 bg-[#251019] rounded-xl border border-[#3B1A27] text-xs font-medium">
+          <div className="grid grid-cols-2 p-1 bg-elevated rounded-xl border border-border text-xs font-medium">
             <button
               onClick={() => setSidebarTab('joined')}
               className={`py-1.5 px-3 rounded-lg transition-all ${
                 sidebarTab === 'joined'
-                  ? 'bg-gradient-to-r from-[#9F1239] to-[#BE185D] text-white shadow-sm font-semibold'
-                  : 'text-[#C9A3B2] hover:text-[#FFF1F5]'
+                  ? 'bg-sage text-text shadow-sm font-semibold'
+                  : 'text-text-2 hover:text-text'
               }`}
             >
               Your Rooms ({joinedRooms.length})
@@ -385,8 +386,8 @@ export function RoomPage() {
               onClick={() => setSidebarTab('discover')}
               className={`py-1.5 px-3 rounded-lg transition-all ${
                 sidebarTab === 'discover'
-                  ? 'bg-gradient-to-r from-[#9F1239] to-[#BE185D] text-white shadow-sm font-semibold'
-                  : 'text-[#C9A3B2] hover:text-[#FFF1F5]'
+                  ? 'bg-sage text-text shadow-sm font-semibold'
+                  : 'text-text-2 hover:text-text'
               }`}
             >
               Discover
@@ -398,20 +399,20 @@ export function RoomPage() {
         {sidebarTab === 'discover' && (
           <div className="px-3 pb-2 shrink-0">
             <div className="relative">
-              <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#8A6674]" />
+              <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-text-3" />
               <input
                 type="text"
                 placeholder="Search public rooms..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full bg-[#251019] border border-[#3B1A27] rounded-xl pl-8 pr-3 py-1.5 text-xs text-[#FFF1F5] placeholder-[#8A6674] focus:outline-none focus:border-[#FF5C9A]/50 focus:ring-1 focus:ring-[#FACC15]/40"
+                className="w-full bg-elevated border border-border rounded-xl pl-8 pr-3 py-1.5 text-xs text-text placeholder-text-3 focus:outline-none focus:border-terracotta focus:ring-1 focus:ring-gold/40"
               />
             </div>
           </div>
         )}
 
         {/* Room List Content */}
-        <div className="flex-1 overflow-y-auto px-2 py-1 scrollbar-thin scrollbar-thumb-[#3B1A27] scrollbar-track-transparent">
+        <div className="flex-1 overflow-y-auto px-2 py-1 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
           {sidebarTab === 'joined' ? (
             /* Joined Rooms Tab */
             <div className="space-y-1">
@@ -437,13 +438,13 @@ export function RoomPage() {
                       }}
                       className={`group relative p-2.5 rounded-xl cursor-pointer flex items-center gap-2.5 transition-all ${
                         isActive
-                          ? 'bg-[#9F1239]/25 border-l-4 border-[#FF5C9A] border-y border-r border-[#3B1A27] shadow-sm'
-                          : 'hover:bg-[#251019] border border-transparent hover:border-[#3B1A27]/60'
+                          ? 'bg-sage/25 border-l-4 border-terracotta border-y border-r border-border shadow-sm'
+                          : 'hover:bg-elevated border border-transparent hover:border-border/60'
                       }`}
                     >
                       {/* Avatar */}
                       <div
-                        className={`w-8 h-8 rounded-full bg-gradient-to-br ${grad} flex items-center justify-center text-white text-xs font-bold shrink-0 shadow-sm`}
+                        className={`w-8 h-8 rounded-full bg-gradient-to-br ${grad} flex items-center justify-center text-text text-xs font-bold shrink-0 shadow-sm`}
                       >
                         <span className="drop-shadow-sm">{r.name.substring(0, 2).toUpperCase()}</span>
                       </div>
@@ -452,13 +453,13 @@ export function RoomPage() {
                       <div className="flex-1 min-w-0">
                         <h2
                           className={`text-xs font-semibold truncate ${
-                            isActive ? 'text-[#FFF1F5]' : 'text-[#C9A3B2] group-hover:text-[#FFF1F5]'
+                            isActive ? 'text-text font-bold' : 'text-text-2 group-hover:text-text'
                           }`}
                         >
                           {r.name}
                         </h2>
-                        <span className="text-[10px] text-[#8A6674] flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
+                        <span className="text-[10px] text-text-3 flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-online inline-block" />
                           Joined
                         </span>
                       </div>
@@ -467,7 +468,7 @@ export function RoomPage() {
                       <button
                         onClick={e => handleLeaveRoom(r.roomId, e)}
                         aria-label={`Leave ${r.name}`}
-                        className="opacity-0 group-hover:opacity-100 p-1 rounded-md text-[#8A6674] hover:text-[#F43F5E] hover:bg-[#F43F5E]/10 transition-all active:scale-95"
+                        className="opacity-0 group-hover:opacity-100 p-1 rounded-md text-text-3 hover:text-text hover:bg-burgundy/25 transition-all active:scale-95"
                         title="Leave Room"
                       >
                         <X className="w-3.5 h-3.5" />
@@ -478,10 +479,10 @@ export function RoomPage() {
               </AnimatePresence>
 
               {joinedRooms.length === 0 && (
-                <div className="p-6 text-center text-[#8A6674] text-xs space-y-2">
-                  <Globe className="w-6 h-6 mx-auto opacity-40 text-[#FF5C9A]" />
+                <div className="p-6 text-center text-text-3 text-xs space-y-2">
+                  <Globe className="w-6 h-6 mx-auto opacity-40 text-terracotta" />
                   <p>No joined rooms yet.</p>
-                  <p className="text-[11px] text-[#8A6674]/80">
+                  <p className="text-[11px] text-text-3/80">
                     Switch to Discover to browse public rooms or create your own.
                   </p>
                 </div>
@@ -503,21 +504,21 @@ export function RoomPage() {
                     }}
                     className={`p-2.5 rounded-xl cursor-pointer flex items-center gap-2.5 transition-all ${
                       isActive
-                        ? 'bg-[#9F1239]/25 border-l-4 border-[#FF5C9A] border-y border-r border-[#3B1A27]'
-                        : 'hover:bg-[#251019] border border-transparent hover:border-[#3B1A27]/60'
+                        ? 'bg-sage/25 border-l-4 border-terracotta border-y border-r border-border'
+                        : 'hover:bg-elevated border border-transparent hover:border-border/60'
                     }`}
                   >
                     <div
-                      className={`w-8 h-8 rounded-full bg-gradient-to-br ${grad} flex items-center justify-center text-white text-xs font-bold shrink-0 shadow-sm`}
+                      className={`w-8 h-8 rounded-full bg-gradient-to-br ${grad} flex items-center justify-center text-text text-xs font-bold shrink-0 shadow-sm`}
                     >
                       <span className="drop-shadow-sm">{r.displayName.substring(0, 2).toUpperCase()}</span>
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <h2 className="text-xs font-semibold truncate text-[#FFF1F5]">{r.displayName}</h2>
-                      <div className="flex items-center gap-2 text-[10px] text-[#8A6674]">
-                        <span className="flex items-center gap-1 text-green-400">
-                          <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                      <h2 className="text-xs font-semibold truncate text-text">{r.displayName}</h2>
+                      <div className="flex items-center gap-2 text-[10px] text-text-3">
+                        <span className="flex items-center gap-1 text-online">
+                          <span className="w-1.5 h-1.5 rounded-full bg-online" />
                           {r.roomId === roomId ? activeCount : r.activeCount} online
                         </span>
                         <span>•</span>
@@ -525,13 +526,13 @@ export function RoomPage() {
                       </div>
                     </div>
 
-                    <ChevronRight className="w-3.5 h-3.5 text-[#8A6674]" />
+                    <ChevronRight className="w-3.5 h-3.5 text-text-3" />
                   </div>
                 );
               })}
 
               {filteredPublicRooms.length === 0 && (
-                <div className="p-6 text-center text-[#8A6674] text-xs">
+                <div className="p-6 text-center text-text-3 text-xs">
                   <p>No public rooms found.</p>
                 </div>
               )}
@@ -540,9 +541,9 @@ export function RoomPage() {
         </div>
 
         {/* Join by ID Input at Sidebar Bottom */}
-        <div className="p-3 border-t border-[#3B1A27] bg-[#190B11] shrink-0">
+        <div className="p-3 border-t border-border bg-surface shrink-0">
           <form onSubmit={handleJoinById} className="space-y-1.5">
-            <label className="text-[10px] font-semibold text-[#8A6674] uppercase tracking-wider block">
+            <label className="text-[10px] font-semibold text-text-3 uppercase tracking-wider block">
               Join by Invite ID
             </label>
             <div className="flex gap-1.5">
@@ -551,12 +552,12 @@ export function RoomPage() {
                 placeholder="Paste room ID..."
                 value={joinId}
                 onChange={e => setJoinId(e.target.value)}
-                className="flex-1 bg-[#251019] border border-[#3B1A27] rounded-xl px-2.5 py-1 text-xs text-[#FFF1F5] placeholder-[#8A6674] focus:outline-none focus:border-[#FF5C9A]/50"
+                className="flex-1 bg-elevated border border-border rounded-xl px-2.5 py-1 text-xs text-text placeholder-text-3 focus:outline-none focus:border-terracotta"
               />
               <button
                 type="submit"
                 disabled={!joinId.trim()}
-                className="px-3 py-1 rounded-xl bg-gradient-to-r from-[#FF5C9A] to-[#F43F5E] text-white text-xs font-semibold disabled:opacity-40 hover:opacity-95 transition-all active:scale-95"
+                className="px-3 py-1 rounded-xl bg-terracotta text-on-terracotta text-xs font-semibold hover:bg-[#E28B65] active:bg-[#C56842] disabled:bg-elevated disabled:text-text-3 transition-all"
               >
                 Join
               </button>
@@ -576,40 +577,40 @@ export function RoomPage() {
       {/* ========================================================
           2. MAIN CHAT AREA
           ======================================================== */}
-      <main className="flex-1 flex flex-col min-w-0 bg-[#190B11] rounded-2xl border border-[#3B1A27] overflow-hidden shadow-2xl shadow-[#9F1239]/10 relative">
+      <main className="flex-1 flex flex-col min-w-0 bg-surface rounded-2xl border border-border overflow-hidden shadow-2xl shadow-black/20 relative">
         {/* Loading State */}
         {roomId && !metadata && !error ? (
-          <div className="flex-1 flex items-center justify-center bg-[#0E0609]">
-            <div className="flex flex-col items-center gap-3 text-[#C9A3B2]">
-              <div className="w-8 h-8 rounded-full border-2 border-[#FF5C9A]/30 border-t-[#FF5C9A] animate-spin" />
+          <div className="flex-1 flex items-center justify-center bg-bg">
+            <div className="flex flex-col items-center gap-3 text-text-2">
+              <div className="w-8 h-8 rounded-full border-2 border-terracotta/30 border-t-terracotta animate-spin" />
               <p className="text-xs font-medium">Entering room...</p>
             </div>
           </div>
         ) : error ? (
           /* Error State */
-          <div className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-[#0E0609]">
-            <div className="w-16 h-16 mb-4 rounded-2xl bg-[#9F1239]/20 border border-[#9F1239]/40 flex items-center justify-center text-3xl shadow-lg">
+          <div className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-bg">
+            <div className="w-16 h-16 mb-4 rounded-2xl bg-burgundy/20 border border-burgundy/40 flex items-center justify-center text-3xl shadow-lg">
               🧹
             </div>
-            <h2 className="text-xl font-bold font-display text-[#FFF1F5] mb-2">Room Unavailable</h2>
-            <p className="text-xs text-[#C9A3B2] max-w-sm mb-6 leading-relaxed">{error}</p>
+            <h2 className="text-xl font-bold font-display text-text mb-2">Room Unavailable</h2>
+            <p className="text-xs text-text-2 max-w-sm mb-6 leading-relaxed">{error}</p>
             <button
               onClick={() => navigate('/room')}
-              className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#FF5C9A] to-[#F43F5E] text-white text-xs font-semibold hover:opacity-95 transition-all active:scale-95 shadow-md"
+              className="px-6 py-2.5 rounded-full bg-terracotta text-on-terracotta text-xs font-semibold hover:bg-[#E28B65] active:bg-[#C56842] transition-all shadow-md"
             >
               Back to Rooms
             </button>
           </div>
         ) : roomId && metadata?.isPrivate && !isAuthorized ? (
           /* Password Protected Room Prompt */
-          <div className="flex-1 flex items-center justify-center p-4 bg-[#0E0609]">
-            <div className="w-full max-w-sm p-6 rounded-2xl bg-[#190B11] border border-[#3B1A27] shadow-2xl text-center space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-[#9F1239]/20 border border-[#FF5C9A]/30 flex items-center justify-center mx-auto text-[#FF5C9A]">
+          <div className="flex-1 flex items-center justify-center p-4 bg-bg">
+            <div className="w-full max-w-sm p-6 rounded-2xl bg-surface border border-border shadow-2xl text-center space-y-4">
+              <div className="w-12 h-12 rounded-xl bg-terracotta/15 border border-terracotta/30 flex items-center justify-center mx-auto text-terracotta">
                 <Lock className="w-6 h-6" />
               </div>
               <div>
-                <h2 className="text-lg font-bold font-display text-[#FFF1F5]">Private Room</h2>
-                <p className="text-xs text-[#C9A3B2] mt-1">{metadata.displayName}</p>
+                <h2 className="text-lg font-bold font-display text-text">Private Room</h2>
+                <p className="text-xs text-text-2 mt-1">{metadata.displayName}</p>
               </div>
               <input
                 type="password"
@@ -617,12 +618,12 @@ export function RoomPage() {
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && handleValidatePassword()}
-                className="w-full bg-[#251019] border border-[#3B1A27] rounded-xl px-3.5 py-2.5 text-sm text-[#FFF1F5] placeholder-[#8A6674] focus:outline-none focus:border-[#FF5C9A]/50 focus:ring-2 focus:ring-[#FACC15]/40"
+                className="w-full bg-elevated border border-border rounded-xl px-3.5 py-2.5 text-sm text-text placeholder-text-3 focus:outline-none focus:border-terracotta focus:ring-2 focus:ring-gold/40"
                 autoFocus
               />
               <button
                 onClick={handleValidatePassword}
-                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#FF5C9A] to-[#F43F5E] text-white text-xs font-semibold hover:opacity-95 transition-all active:scale-95 shadow-md shadow-[#9F1239]/30"
+                className="w-full py-2.5 rounded-xl bg-terracotta text-on-terracotta text-xs font-semibold hover:bg-[#E28B65] active:bg-[#C56842] transition-all shadow-md"
               >
                 Unlock Room
               </button>
@@ -630,24 +631,24 @@ export function RoomPage() {
           </div>
         ) : !roomId ? (
           /* No Room Selected (Lobby) */
-          <div className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-[#0E0609]">
-            <div className="w-16 h-16 mb-4 rounded-2xl bg-[#251019] border border-[#3B1A27] flex items-center justify-center text-3xl shadow-lg">
+          <div className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-bg">
+            <div className="w-16 h-16 mb-4 rounded-2xl bg-elevated border border-border flex items-center justify-center text-3xl shadow-lg">
               💬
             </div>
-            <h2 className="text-xl font-bold font-display text-[#FFF1F5] mb-2">Welcome to EchoChat</h2>
-            <p className="text-xs text-[#C9A3B2] max-w-sm mb-6 leading-relaxed">
+            <h2 className="text-xl font-bold font-display text-text mb-2">Welcome to EchoChat</h2>
+            <p className="text-xs text-text-2 max-w-sm mb-6 leading-relaxed">
               Select a room from the left sidebar or create a new public or private room to chat in real time with Gemini AI.
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setIsCreateModalOpen(true)}
-                className="px-5 py-2 rounded-full bg-gradient-to-r from-[#FF5C9A] to-[#F43F5E] text-white text-xs font-semibold hover:opacity-95 transition-all active:scale-95 shadow-md"
+                className="px-5 py-2 rounded-full bg-terracotta text-on-terracotta text-xs font-semibold hover:bg-[#E28B65] active:bg-[#C56842] transition-all shadow-md"
               >
                 Create Room
               </button>
               <button
                 onClick={() => setSidebarTab('discover')}
-                className="px-5 py-2 rounded-full bg-[#251019] hover:bg-[#3B1A27] border border-[#3B1A27] text-[#FFF1F5] text-xs font-semibold transition-all active:scale-95"
+                className="px-5 py-2 rounded-full bg-elevated hover:bg-surface border border-border text-text text-xs font-semibold transition-all active:scale-95"
               >
                 Browse Public Rooms
               </button>
@@ -657,46 +658,46 @@ export function RoomPage() {
           /* Active Chat Room View */
           <>
             {/* Header */}
-            <header className="px-4 py-3 border-b border-[#3B1A27] bg-[#190B11] flex items-center justify-between shrink-0 z-10">
+            <header className="px-4 py-3 border-b border-border bg-surface flex items-center justify-between shrink-0 z-10">
               <div className="flex items-center gap-3 min-w-0">
                 {/* Mobile sidebar toggle */}
                 <button
                   onClick={() => setIsMobileSidebarOpen(true)}
                   aria-label="Open rooms menu"
-                  className="lg:hidden p-1.5 rounded-lg text-[#C9A3B2] hover:text-[#FFF1F5] hover:bg-[#251019] transition-colors"
+                  className="lg:hidden p-1.5 rounded-lg text-text-2 hover:text-text hover:bg-elevated transition-colors"
                 >
                   <Menu className="w-4 h-4" />
                 </button>
 
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <h2 className="font-display font-bold text-sm sm:text-base text-[#FFF1F5] truncate">
+                    <h2 className="font-display font-bold text-sm sm:text-base text-text truncate">
                       {metadata?.displayName}
                     </h2>
                     {metadata?.isPrivate && (
-                      <span className="p-0.5 rounded bg-[#9F1239]/30 text-[#FF5C9A]" title="Private Room">
+                      <span className="p-0.5 rounded bg-burgundy/25 text-rose" title="Private Room">
                         <Lock className="w-3 h-3" />
                       </span>
                     )}
                   </div>
 
                   {/* Presence & Connection status */}
-                  <div className="flex items-center gap-2 text-[11px] text-[#C9A3B2]">
+                  <div className="flex items-center gap-2 text-[11px] text-text-2">
                     <div className="flex items-center gap-1.5">
                       <span className="relative flex h-2 w-2">
                         {isConnected && (
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-online opacity-75" />
                         )}
                         <span
                           className={`relative inline-flex rounded-full h-2 w-2 ${
-                            isConnected ? 'bg-green-500' : 'bg-red-500'
+                            isConnected ? 'bg-online' : 'bg-burgundy'
                           }`}
                         />
                       </span>
                       <span>{isConnected ? `${activeCount} online` : 'Connecting...'}</span>
                     </div>
 
-                    <span className="text-[#3B1A27]">•</span>
+                    <span className="text-border">•</span>
 
                     {/* Display name editor */}
                     {isEditingName ? (
@@ -706,15 +707,15 @@ export function RoomPage() {
                         onChange={e => setEditNameValue(e.target.value)}
                         onBlur={handleSaveEditName}
                         onKeyDown={e => e.key === 'Enter' && handleSaveEditName()}
-                        className="bg-[#251019] text-[#FFF1F5] px-1.5 py-0.5 rounded text-[11px] border border-[#FF5C9A]/40 outline-none w-24"
+                        className="bg-elevated text-text px-1.5 py-0.5 rounded text-[11px] border border-terracotta outline-none w-24"
                       />
                     ) : (
                       <button
                         onClick={() => setIsEditingName(true)}
-                        className="hover:text-[#FFF1F5] transition-colors flex items-center gap-1 group"
+                        className="hover:text-text transition-colors flex items-center gap-1 group"
                         title="Click to change your display name"
                       >
-                        <span className="text-[#8A6674]">as</span>
+                        <span className="text-text-3">as</span>
                         <span className="font-medium underline decoration-dotted underline-offset-2">
                           {displayName}
                         </span>
@@ -732,18 +733,18 @@ export function RoomPage() {
                   aria-label="Copy Invite ID"
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all active:scale-95 border ${
                     copiedInvite
-                      ? 'bg-green-500/10 border-green-500/30 text-green-400'
-                      : 'bg-[#251019] border-[#3B1A27] text-[#FFF1F5] hover:bg-[#3B1A27]'
+                      ? 'bg-online/15 border-online/30 text-online'
+                      : 'bg-elevated border-border text-text hover:bg-surface'
                   }`}
                 >
                   {copiedInvite ? (
                     <>
-                      <Check className="w-3.5 h-3.5 text-green-400" />
+                      <Check className="w-3.5 h-3.5 text-online" />
                       <span>Copied</span>
                     </>
                   ) : (
                     <>
-                      <Copy className="w-3.5 h-3.5 text-[#FF5C9A]" />
+                      <Copy className="w-3.5 h-3.5 text-terracotta" />
                       <span className="hidden sm:inline">Copy Invite ID</span>
                       <span className="sm:hidden">Copy</span>
                     </>
@@ -756,8 +757,8 @@ export function RoomPage() {
                   aria-label="Toggle room information"
                   className={`p-1.5 rounded-full transition-all border ${
                     isInfoPanelOpen
-                      ? 'bg-[#9F1239]/20 border-[#FF5C9A]/30 text-[#FF5C9A]'
-                      : 'bg-[#251019] border-[#3B1A27] text-[#8A6674] hover:text-[#FFF1F5]'
+                      ? 'bg-sage/30 border-terracotta/40 text-terracotta'
+                      : 'bg-elevated border-border text-text-3 hover:text-text'
                   }`}
                   title="Room Info"
                 >
@@ -766,31 +767,31 @@ export function RoomPage() {
               </div>
             </header>
 
-            {/* Message Area with PRD subtle radial glow (no doodle pattern!) */}
-            <div className="flex-1 flex flex-col relative overflow-hidden chat-radial-glow select-text">
+            {/* Message Area: flat --bg, no doodles (PRD Step 3) */}
+            <div className="flex-1 flex flex-col relative overflow-hidden bg-bg chat-canvas select-text">
               {allMessages.length === 0 ? (
                 /* Empty state */
                 <div className="flex-1 flex flex-col items-center justify-center text-center p-6 sm:p-10 select-none">
-                  <div className="w-14 h-14 mb-4 rounded-2xl bg-gradient-to-br from-[#9F1239]/20 to-[#FF5C9A]/20 border border-[#FF5C9A]/30 flex items-center justify-center shadow-lg">
-                    <Sparkles className="w-6 h-6 text-[#FF5C9A]" />
+                  <div className="w-14 h-14 mb-4 rounded-2xl bg-sage/20 border border-sage/40 flex items-center justify-center shadow-lg text-sage">
+                    <Sparkles className="w-6 h-6" />
                   </div>
-                  <h3 className="text-base font-display font-bold text-[#FFF1F5] mb-1">
+                  <h3 className="text-base font-display font-bold text-text mb-1">
                     No messages yet
                   </h3>
-                  <p className="text-xs text-[#C9A3B2] max-w-sm mb-5 leading-relaxed">
+                  <p className="text-xs text-text-2 max-w-sm mb-5 leading-relaxed">
                     Say hello to the room, or mention{' '}
-                    <span className="text-yellow-400 font-mono font-semibold">@gemini</span> to get instant AI answers.
+                    <span className="text-gold font-mono font-semibold">@gemini</span> to get instant AI answers.
                   </p>
                   <div className="flex flex-wrap justify-center gap-2 max-w-md">
                     {[
-                      '@gemini explain quantum computing simply',
-                      '@gemini what are Java virtual threads?',
+                      '@gemini explain virtual threads simply',
+                      '@gemini summarize key points of this chat',
                       'Hello everyone! 👋',
                     ].map(suggestion => (
                       <button
                         key={suggestion}
                         onClick={() => handleSend(suggestion)}
-                        className="px-3 py-1.5 rounded-full bg-[#251019] hover:bg-[#3B1A27] border border-[#3B1A27] text-[#FFF1F5] text-xs transition-all active:scale-95"
+                        className="px-3 py-1.5 rounded-full bg-elevated hover:bg-surface border border-border text-text text-xs transition-all active:scale-95"
                       >
                         {suggestion}
                       </button>
@@ -806,7 +807,7 @@ export function RoomPage() {
             </div>
 
             {/* Input Bar */}
-            <footer className="p-3 border-t border-[#3B1A27] bg-[#190B11] shrink-0">
+            <footer className="p-3 border-t border-border bg-surface shrink-0">
               <ChatInput
                 onSendMessage={handleSend}
                 disabled={!isConnected}
@@ -827,19 +828,19 @@ export function RoomPage() {
             animate={{ opacity: 1, width: 280, x: 0 }}
             exit={{ opacity: 0, width: 0, x: 20 }}
             transition={{ duration: 0.25, ease: 'easeInOut' }}
-            className="hidden xl:flex flex-col bg-[#190B11] border border-[#3B1A27] rounded-2xl overflow-hidden shrink-0 shadow-2xl shadow-[#9F1239]/10"
+            className="hidden xl:flex flex-col bg-surface border border-border rounded-2xl overflow-hidden shrink-0 shadow-2xl shadow-black/20"
           >
             {/* Header */}
-            <div className="p-3.5 border-b border-[#3B1A27] flex items-center justify-between shrink-0">
+            <div className="p-3.5 border-b border-border flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2">
-                <Info className="w-4 h-4 text-[#FF5C9A]" />
-                <h3 className="font-display font-bold text-xs text-[#FFF1F5] uppercase tracking-wider">
+                <Info className="w-4 h-4 text-terracotta" />
+                <h3 className="font-display font-bold text-xs text-text uppercase tracking-wider">
                   Room Info
                 </h3>
               </div>
               <button
                 onClick={() => setIsInfoPanelOpen(false)}
-                className="text-[#8A6674] hover:text-white p-1 rounded-md transition-colors"
+                className="text-text-3 hover:text-text p-1 rounded-md transition-colors"
                 title="Hide Info"
               >
                 <X className="w-4 h-4" />
@@ -849,42 +850,42 @@ export function RoomPage() {
             {/* Content */}
             <div className="flex-1 overflow-y-auto p-4 space-y-5 text-xs scrollbar-thin">
               {/* Room details card */}
-              <div className="p-3 rounded-xl bg-[#251019] border border-[#3B1A27] space-y-2">
+              <div className="p-3 rounded-xl bg-elevated border border-border space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-[#8A6674] text-[11px]">Room Name</span>
-                  <span className="font-semibold text-[#FFF1F5] truncate max-w-[130px]">
+                  <span className="text-text-3 text-[11px]">Room Name</span>
+                  <span className="font-semibold text-text truncate max-w-[130px]">
                     {metadata.displayName}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[#8A6674] text-[11px]">Type</span>
-                  <span className="text-[#FFF1F5] flex items-center gap-1 font-medium">
+                  <span className="text-text-3 text-[11px]">Type</span>
+                  <span className="text-text flex items-center gap-1 font-medium">
                     {metadata.isPrivate ? (
                       <>
-                        <Lock className="w-3 h-3 text-[#FF5C9A]" /> Private
+                        <Lock className="w-3 h-3 text-rose" /> Private
                       </>
                     ) : (
                       <>
-                        <Globe className="w-3 h-3 text-green-400" /> Public
+                        <Globe className="w-3 h-3 text-online" /> Public
                       </>
                     )}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[#8A6674] text-[11px]">Capacity</span>
-                  <span className="text-[#FFF1F5] font-medium">
+                  <span className="text-text-3 text-[11px]">Capacity</span>
+                  <span className="text-text font-medium">
                     {activeCount} / {metadata.maxUsers} max
                   </span>
                 </div>
               </div>
 
               {/* Ephemeral room notice */}
-              <div className="p-3 rounded-xl bg-[#251019] border border-[#3B1A27] space-y-1.5">
-                <div className="flex items-center gap-1.5 text-yellow-400 font-semibold text-[11px]">
+              <div className="p-3 rounded-xl bg-elevated border border-border space-y-1.5">
+                <div className="flex items-center gap-1.5 text-gold font-semibold text-[11px]">
                   <Clock className="w-3.5 h-3.5" />
                   <span>Ephemeral Room</span>
                 </div>
-                <p className="text-[11px] text-[#C9A3B2] leading-relaxed">
+                <p className="text-[11px] text-text-2 leading-relaxed">
                   Self-cleaning: this room automatically dissolves after 10 minutes of complete inactivity.
                 </p>
               </div>
@@ -892,21 +893,21 @@ export function RoomPage() {
               {/* Members section */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[11px] font-semibold text-[#8A6674] uppercase tracking-wider flex items-center gap-1.5">
-                    <Users className="w-3.5 h-3.5 text-[#FF5C9A]" />
+                  <span className="text-[11px] font-semibold text-text-3 uppercase tracking-wider flex items-center gap-1.5">
+                    <Users className="w-3.5 h-3.5 text-terracotta" />
                     <span>Active Now ({activeCount})</span>
                   </span>
                 </div>
                 <div className="space-y-1.5">
-                  <div className="flex items-center gap-2 p-2 rounded-lg bg-[#251019]/60 border border-[#3B1A27]/60">
-                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                    <span className="text-xs font-medium text-[#FFF1F5] truncate">
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-elevated/70 border border-border/70">
+                    <div className="w-2 h-2 rounded-full bg-online animate-pulse" />
+                    <span className="text-xs font-medium text-text truncate">
                       {displayName} (You)
                     </span>
                   </div>
                   {activeCount > 1 && (
-                    <div className="flex items-center gap-2 p-2 rounded-lg bg-[#251019]/40 border border-[#3B1A27]/40 text-[#8A6674]">
-                      <div className="w-2 h-2 rounded-full bg-green-500" />
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-elevated/40 border border-border/40 text-text-3">
+                      <div className="w-2 h-2 rounded-full bg-online" />
                       <span className="text-xs truncate">
                         +{activeCount - 1} other participant{activeCount > 2 ? 's' : ''}
                       </span>
@@ -917,14 +918,14 @@ export function RoomPage() {
 
               {/* Invite ID section */}
               <div className="space-y-1.5">
-                <span className="text-[11px] font-semibold text-[#8A6674] uppercase tracking-wider block">
+                <span className="text-[11px] font-semibold text-text-3 uppercase tracking-wider block">
                   Invite ID
                 </span>
-                <div className="p-2 rounded-lg bg-[#0E0609] border border-[#3B1A27] font-mono text-[11px] text-[#C9A3B2] break-all select-all flex items-center justify-between gap-1">
+                <div className="p-2 rounded-lg bg-bg border border-border font-mono text-[11px] text-text-2 break-all select-all flex items-center justify-between gap-1">
                   <span className="truncate">{roomId}</span>
                   <button
                     onClick={handleCopyInvite}
-                    className="p-1 rounded text-[#FF5C9A] hover:bg-[#3B1A27]"
+                    className="p-1 rounded text-terracotta hover:bg-elevated"
                     title="Copy"
                   >
                     <Copy className="w-3.5 h-3.5" />
@@ -936,7 +937,7 @@ export function RoomPage() {
               <div className="pt-2">
                 <button
                   onClick={e => handleLeaveRoom(roomId, e)}
-                  className="w-full py-2 px-3 rounded-xl bg-[#251019] hover:bg-red-950/40 border border-[#3B1A27] hover:border-red-500/40 text-red-400 hover:text-red-300 transition-all flex items-center justify-center gap-2 text-xs font-medium active:scale-95"
+                  className="w-full py-2 px-3 rounded-xl bg-burgundy/20 hover:bg-burgundy border border-burgundy/40 text-text hover:text-text transition-all flex items-center justify-center gap-2 text-xs font-medium active:scale-95"
                 >
                   <LogOut className="w-3.5 h-3.5" />
                   <span>Leave Room</span>
@@ -968,21 +969,21 @@ export function RoomPage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 16 }}
               transition={{ type: 'spring', stiffness: 320, damping: 28 }}
-              className="relative w-full max-w-md bg-[#190B11] border border-[#FF5C9A]/30 rounded-2xl p-6 shadow-2xl shadow-[#9F1239]/30 z-10 space-y-5"
+              className="relative w-full max-w-md bg-surface border border-border rounded-2xl p-6 shadow-2xl shadow-black/50 z-10 space-y-5"
             >
-              <div className="flex items-center justify-between border-b border-[#3B1A27] pb-3">
+              <div className="flex items-center justify-between border-b border-border pb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#9F1239] to-[#FF5C9A] flex items-center justify-center text-white shadow-md">
+                  <div className="w-8 h-8 rounded-xl bg-terracotta flex items-center justify-center text-on-terracotta shadow-md">
                     <Plus className="w-4 h-4" />
                   </div>
                   <div>
-                    <h2 className="font-display font-bold text-base text-[#FFF1F5]">Create New Room</h2>
-                    <p className="text-[11px] text-[#8A6674]">Public or password-protected room</p>
+                    <h2 className="font-display font-bold text-base text-text">Create New Room</h2>
+                    <p className="text-[11px] text-text-3">Public or password-protected room</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setIsCreateModalOpen(false)}
-                  className="p-1 rounded-lg text-[#8A6674] hover:text-white hover:bg-[#251019] transition-colors"
+                  className="p-1 rounded-lg text-text-3 hover:text-text hover:bg-elevated transition-colors"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -991,31 +992,31 @@ export function RoomPage() {
               <form onSubmit={handleCreateRoom} className="space-y-4">
                 {/* Room Name */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-[#FFF1F5]">Room Name</label>
+                  <label className="text-xs font-semibold text-text">Room Name</label>
                   <input
                     type="text"
                     placeholder="e.g. AI Brainstorming, Dev Chat"
                     value={newRoomName}
                     onChange={e => setNewRoomName(e.target.value)}
                     required
-                    className="w-full bg-[#251019] border border-[#3B1A27] rounded-xl px-3.5 py-2.5 text-xs text-[#FFF1F5] placeholder-[#8A6674] focus:outline-none focus:border-[#FF5C9A]/60 focus:ring-2 focus:ring-[#FACC15]/40"
+                    className="w-full bg-elevated border border-border rounded-xl px-3.5 py-2.5 text-xs text-text placeholder-text-3 focus:outline-none focus:border-terracotta focus:ring-2 focus:ring-gold/40"
                   />
                 </div>
 
                 {/* Privacy Toggle */}
-                <div className="flex items-center justify-between p-3 rounded-xl bg-[#251019] border border-[#3B1A27]">
+                <div className="flex items-center justify-between p-3 rounded-xl bg-elevated border border-border">
                   <div className="flex items-center gap-2.5">
-                    <Lock className={`w-4 h-4 ${newRoomIsPrivate ? 'text-[#FF5C9A]' : 'text-[#8A6674]'}`} />
+                    <Lock className={`w-4 h-4 ${newRoomIsPrivate ? 'text-rose' : 'text-text-3'}`} />
                     <div>
-                      <p className="text-xs font-semibold text-[#FFF1F5]">Private Room</p>
-                      <p className="text-[10px] text-[#8A6674]">Require a password to join</p>
+                      <p className="text-xs font-semibold text-text">Private Room</p>
+                      <p className="text-[10px] text-text-3">Require a password to join</p>
                     </div>
                   </div>
                   <input
                     type="checkbox"
                     checked={newRoomIsPrivate}
                     onChange={e => setNewRoomIsPrivate(e.target.checked)}
-                    className="w-4 h-4 accent-[#FF5C9A] cursor-pointer rounded"
+                    className="w-4 h-4 accent-terracotta cursor-pointer rounded"
                   />
                 </div>
 
@@ -1027,25 +1028,25 @@ export function RoomPage() {
                     exit={{ opacity: 0, height: 0 }}
                     className="space-y-1.5"
                   >
-                    <label className="text-xs font-semibold text-[#FFF1F5]">Room Password</label>
+                    <label className="text-xs font-semibold text-text">Room Password</label>
                     <input
                       type="password"
                       placeholder="Set a secret passcode..."
                       value={newRoomPassword}
                       onChange={e => setNewRoomPassword(e.target.value)}
                       required={newRoomIsPrivate}
-                      className="w-full bg-[#251019] border border-[#3B1A27] rounded-xl px-3.5 py-2.5 text-xs text-[#FFF1F5] placeholder-[#8A6674] focus:outline-none focus:border-[#FF5C9A]/60 focus:ring-2 focus:ring-[#FACC15]/40"
+                      className="w-full bg-elevated border border-border rounded-xl px-3.5 py-2.5 text-xs text-text placeholder-text-3 focus:outline-none focus:border-terracotta focus:ring-2 focus:ring-gold/40"
                     />
                   </motion.div>
                 )}
 
                 {/* Max Users Select */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-[#FFF1F5]">Max Participants</label>
+                  <label className="text-xs font-semibold text-text">Max Participants</label>
                   <select
                     value={newRoomMaxUsers}
                     onChange={e => setNewRoomMaxUsers(Number(e.target.value))}
-                    className="w-full bg-[#251019] border border-[#3B1A27] rounded-xl px-3.5 py-2.5 text-xs text-[#FFF1F5] focus:outline-none focus:border-[#FF5C9A]/60 focus:ring-2 focus:ring-[#FACC15]/40 cursor-pointer"
+                    className="w-full bg-elevated border border-border rounded-xl px-3.5 py-2.5 text-xs text-text focus:outline-none focus:border-terracotta focus:ring-2 focus:ring-gold/40 cursor-pointer"
                   >
                     <option value={2}>2 Users (Direct 1-on-1)</option>
                     <option value={5}>5 Users (Small Group)</option>
@@ -1059,7 +1060,7 @@ export function RoomPage() {
                 <button
                   type="submit"
                   disabled={isCreatingRoom}
-                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#FF5C9A] to-[#F43F5E] text-white text-xs font-semibold hover:opacity-95 transition-all active:scale-95 shadow-lg shadow-[#9F1239]/40 mt-2 disabled:opacity-50"
+                  className="w-full py-2.5 rounded-xl bg-terracotta text-on-terracotta text-xs font-semibold hover:bg-[#E28B65] active:bg-[#C56842] transition-all active:scale-95 shadow-lg shadow-black/30 mt-2 disabled:bg-elevated disabled:text-text-3"
                 >
                   {isCreatingRoom ? 'Creating Room...' : 'Create & Join Room'}
                 </button>

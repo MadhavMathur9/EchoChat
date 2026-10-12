@@ -99,7 +99,7 @@ export function MessageList({ messages, currentUserUuid }: MessageListProps) {
                 {/* Date separator */}
                 {showDateSeparator && (
                   <div className="flex items-center justify-center my-4">
-                    <div className="px-3 py-1 rounded-full bg-[#190B11]/90 border border-[#3B1A27] text-[11px] font-medium text-[#C9A3B2] shadow-sm tracking-wide">
+                    <div className="px-3 py-1 rounded-full bg-elevated border border-border text-[11px] font-medium text-text-2 shadow-sm tracking-wide">
                       {formatDateSeparator(msg.timestamp)}
                     </div>
                   </div>
@@ -132,12 +132,12 @@ export function MessageList({ messages, currentUserUuid }: MessageListProps) {
             <button
               onClick={scrollToBottom}
               aria-label="Scroll to bottom"
-              className="relative flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#251019] text-[#FFF1F5] border border-[#FF5C9A]/30 shadow-lg shadow-black/40 hover:bg-[#3B1A27] transition-all active:scale-95 text-xs font-medium"
+              className="relative flex items-center gap-1.5 px-3 py-2 rounded-full bg-elevated text-text border border-border shadow-lg shadow-black/40 hover:bg-surface transition-all active:scale-95 text-xs font-medium"
             >
-              <ArrowDown className="w-3.5 h-3.5 text-[#FF5C9A]" />
+              <ArrowDown className="w-3.5 h-3.5 text-terracotta" />
               <span>Latest</span>
               {unreadCount > 0 && (
-                <span className="ml-1 px-1.5 py-0.2 rounded-full bg-[#F43F5E] text-white text-[10px] font-bold">
+                <span className="ml-1 px-1.5 py-0.2 rounded-full bg-burgundy text-text text-[10px] font-bold">
                   {unreadCount}
                 </span>
               )}
