@@ -931,25 +931,32 @@ export function RoomPage() {
                 </p>
               </div>
 
-              {/* Members section */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[11px] font-semibold text-text-3 uppercase tracking-wider flex items-center gap-1.5">
-                    <Users className="w-3.5 h-3.5 text-terracotta" />
-                    <span>Participants ({Math.max(activeCount, allMembers.length)})</span>
-                  </span>
-                  <span className="text-[10px] text-online font-medium flex items-center gap-1">
+              {/* Participants Card (Concise scrollable box) */}
+              <div className="rounded-xl bg-elevated border border-border overflow-hidden flex flex-col shadow-sm">
+                {/* Header */}
+                <div className="px-3 py-2 bg-surface/60 border-b border-border/80 flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <Users className="w-3.5 h-3.5 text-terracotta shrink-0" />
+                    <span className="font-semibold text-text text-[11px] uppercase tracking-wider">
+                      Participants
+                    </span>
+                    <span className="text-[10px] text-text-3 font-mono">
+                      ({Math.max(activeCount, allMembers.length)})
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-online font-medium flex items-center gap-1 bg-online/10 px-2 py-0.5 rounded-full border border-online/20 shrink-0">
                     <span className="w-1.5 h-1.5 rounded-full bg-online animate-pulse" />
                     {activeCount} online
                   </span>
                 </div>
 
-                <div className="space-y-1.5 max-h-52 overflow-y-auto scrollbar-thin pr-0.5">
+                {/* Scrollable list box */}
+                <div className="p-2 space-y-1.5 max-h-48 overflow-y-auto scrollbar-thin">
                   {/* Current User */}
-                  <div className="flex items-center justify-between p-2 rounded-lg bg-elevated/80 border border-border/80">
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-surface/70 border border-border/70 hover:border-border transition-colors">
                     <div className="flex items-center gap-2 min-w-0">
                       <div className="w-2 h-2 rounded-full bg-online animate-pulse shrink-0" />
-                      <span className="text-xs font-medium text-text truncate">
+                      <span className="text-xs font-medium text-text truncate" title={displayName || 'You'}>
                         {displayName}
                       </span>
                     </div>
@@ -962,7 +969,7 @@ export function RoomPage() {
                   {otherParticipants.map(name => (
                     <div
                       key={name}
-                      className="flex items-center justify-between p-2 rounded-lg bg-elevated/50 hover:bg-elevated border border-border/60 transition-all group"
+                      className="flex items-center justify-between p-2 rounded-lg bg-surface/40 hover:bg-surface/90 border border-border/50 hover:border-terracotta/40 transition-all group"
                     >
                       <div className="flex items-center gap-2 min-w-0">
                         <div className="w-2 h-2 rounded-full bg-online shrink-0" />
@@ -972,7 +979,7 @@ export function RoomPage() {
                       </div>
                       <button
                         onClick={() => setMentionToInsert(name)}
-                        className="px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold text-gold bg-gold/15 hover:bg-gold/25 transition-all active:scale-95 shrink-0"
+                        className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold text-gold bg-gold/15 hover:bg-gold/25 transition-all active:scale-95 shrink-0 whitespace-nowrap truncate max-w-[100px]"
                         title={`Mention @${name}`}
                       >
                         @{name}
@@ -982,8 +989,8 @@ export function RoomPage() {
 
                   {/* If activeCount exceeds named members */}
                   {activeCount > allMembers.length && (
-                    <div className="flex items-center gap-2 p-2 rounded-lg bg-elevated/30 border border-dashed border-border/50 text-text-3">
-                      <div className="w-2 h-2 rounded-full bg-online/70 shrink-0" />
+                    <div className="flex items-center gap-2 p-1.5 rounded-lg bg-surface/30 border border-dashed border-border/40 text-text-3">
+                      <div className="w-1.5 h-1.5 rounded-full bg-online/70 shrink-0" />
                       <span className="text-[11px] truncate">
                         +{activeCount - allMembers.length} other participant{activeCount - allMembers.length > 1 ? 's' : ''}
                       </span>
@@ -991,7 +998,7 @@ export function RoomPage() {
                   )}
 
                   {otherParticipants.length === 0 && activeCount <= 1 && (
-                    <p className="text-[11px] text-text-3 italic px-1 pt-1">
+                    <p className="text-[11px] text-text-3 italic text-center py-2 px-1">
                       No other participants yet. Share the invite ID to chat!
                     </p>
                   )}

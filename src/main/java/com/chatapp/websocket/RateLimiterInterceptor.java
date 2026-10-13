@@ -23,8 +23,6 @@ public class RateLimiterInterceptor implements ChannelInterceptor {
     private final StringRedisTemplate redisTemplate;
     private final SimpMessagingTemplate messagingTemplate;
     private final DefaultRedisScript<Long> rateLimiterScript;
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RateLimiterInterceptor.class);
-
     public RateLimiterInterceptor(StringRedisTemplate redisTemplate, SimpMessagingTemplate messagingTemplate) {
         this.redisTemplate = redisTemplate;
         this.messagingTemplate = messagingTemplate;

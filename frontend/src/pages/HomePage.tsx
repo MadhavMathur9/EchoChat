@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -75,6 +75,8 @@ export function HomePage() {
     'EchoChat combines lightweight ephemeral rooms with live Google Gemini AI. Everything vanishes automatically after 10 minutes of inactivity!'
   );
   const [demoIsTyping, setDemoIsTyping] = useState(false);
+  const [rateLimitMessage, setRateLimitMessage] = useState<string | null>(null);
+  const demoTimestampsRef = useRef<number[]>([]);
 
   // Fetch public rooms count on mount
   useEffect(() => {
@@ -147,19 +149,56 @@ export function HomePage() {
     }
   };
 
-  const handleRunMiniDemo = (e: React.FormEvent) => {
+  const handleRunMiniDemo = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!demoPrompt.trim()) return;
+    if (!demoPrompt.trim() || demoIsTyping) return;
 
+    // Rate limiter: max 15 requests in under 60 seconds (1 minute)
+    const now = Date.now();
+    const recentRequests = demoTimestampsRef.current.filter(t => now - t < 60000);
+    demoTimestampsRef.current = recentRequests;
+
+    if (recentRequests.length >= 15) {
+      const msg = "Now check out the product! You've made more than 15 demo requests in under a minute.";
+      setRateLimitMessage(msg);
+      toast.error(msg);
+      return;
+    }
+
+    demoTimestampsRef.current.push(now);
+    setRateLimitMessage(null);
     setDemoIsTyping(true);
     setDemoResponse(null);
 
-    setTimeout(() => {
-      setDemoIsTyping(false);
+    try {
+      const res = await apiFetch('/api/v1/demo/gemini', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: demoPrompt.trim() }),
+      });
+
+      if (res.status === 429) {
+        const data = await res.json().catch(() => ({}));
+        const msg = data.message || "Now check out the product! You've made more than 15 demo requests in under a minute.";
+        setRateLimitMessage(msg);
+        toast.error(msg);
+      } else if (res.ok) {
+        const data = await res.json();
+        setDemoResponse(data.response || 'No response generated.');
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        setDemoResponse(
+          errorData.message || `Gemini: Based on your question "${demoPrompt.replace('@gemini', '').trim()}", EchoChat provides sub-millisecond STOMP dispatch powered by Java 21 Virtual Threads!`
+        );
+      }
+    } catch {
+      // Graceful offline fallback
       setDemoResponse(
         `Gemini: Based on your question "${demoPrompt.replace('@gemini', '').trim()}", EchoChat provides sub-millisecond STOMP dispatch powered by Java 21 Virtual Threads!`
       );
-    }, 1200);
+    } finally {
+      setDemoIsTyping(false);
+    }
   };
 
   return (
@@ -557,23 +596,52 @@ export function HomePage() {
                 <input
                   type="text"
                   value={demoPrompt}
-                  onChange={e => setDemoPrompt(e.target.value)}
+                  onChange={e => {
+                    setDemoPrompt(e.target.value);
+                    if (rateLimitMessage) setRateLimitMessage(null);
+                  }}
                   className="flex-1 bg-surface border border-border rounded-lg px-3 py-1.5 text-xs text-text placeholder-text-3 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-elevated transition-all"
                   placeholder="@gemini ask something..."
                 />
                 <button
                   type="submit"
                   disabled={demoIsTyping}
-                  className="px-3.5 py-1.5 rounded-lg bg-terracotta hover:bg-[#E28B65] active:bg-[#C56842] text-on-terracotta text-xs font-semibold transition-all active:scale-95 disabled:bg-elevated disabled:text-text-3 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-gold"
+                  className="px-3.5 py-1.5 rounded-lg bg-terracotta hover:bg-[#E28B65] active:bg-[#C56842] text-on-terracotta text-xs font-semibold transition-all active:scale-95 disabled:bg-elevated disabled:text-text-3 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-gold shrink-0"
                 >
                   {demoIsTyping ? 'Thinking...' : 'Try Demo'}
                 </button>
               </div>
 
+              {rateLimitMessage && (
+                <div className="p-3 rounded-xl bg-burgundy/25 border border-burgundy/50 text-xs text-rose flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg">
+                  <div className="flex items-center gap-2">
+                    <span className="text-base">🚀</span>
+                    <div>
+                      <p className="font-semibold text-text">{rateLimitMessage}</p>
+                      <p className="text-[11px] text-text-2 mt-0.5">Spin up a room for unrestricted real-time AI and team discussions.</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="px-3 py-1.5 rounded-lg bg-terracotta text-on-terracotta text-xs font-bold hover:bg-[#E28B65] transition-all active:scale-95 shrink-0 shadow-sm text-center"
+                  >
+                    Check Out EchoChat →
+                  </button>
+                </div>
+              )}
+
               {demoResponse && (
-                <div className="p-2.5 rounded-lg bg-[#1B2333] border border-[rgba(127,168,232,0.35)] text-[11px] text-text leading-relaxed shadow-[0_0_24px_rgba(127,168,232,0.08)]">
-                  <span className="text-[10px] font-bold text-blue block mb-0.5">✦ Live Demo Output:</span>
-                  {demoResponse}
+                <div className="p-3 rounded-xl bg-[#1B2333] border border-[rgba(127,168,232,0.35)] text-xs text-text leading-relaxed shadow-[0_0_24px_rgba(127,168,232,0.08)]">
+                  <span className="text-[11px] font-bold text-blue flex items-center gap-1.5 mb-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-gold" />
+                    Live Gemini Output:
+                  </span>
+                  <div className="whitespace-pre-wrap leading-relaxed text-text/95">
+                    {demoResponse}
+                  </div>
                 </div>
               )}
             </form>
@@ -737,7 +805,7 @@ export function HomePage() {
               <span>GitHub</span>
             </a>
             <span className="text-border">•</span>
-            <span>Google Gemini 1.5</span>
+            <span>Google Gemini AI</span>
             <span className="text-border">•</span>
             <span>Netlify Deployed</span>
           </div>
