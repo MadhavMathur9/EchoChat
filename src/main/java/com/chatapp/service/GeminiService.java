@@ -24,14 +24,25 @@ public class GeminiService {
     @Value("${gemini.api-key:}")
     private String apiKey;
 
-    @Value("${gemini.model:gemini-2.5-flash-lite}")
+    @Value("${gemini.model:gemini-3.5-flash-lite}")
     private String model;
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();
 
     /**
-     * Retrieves a response from the AI model asynchronously with automatic retries and model fallbacks.
+     * Retrieves a response from the AI model asynchronously with automatic model fallbacks.
+     *
+     * <p>Fallback chain (as of October 2026, per https://ai.google.dev/gemini-api/docs/models):
+     * <ol>
+     *   <li>Configured model (default: gemini-3.5-flash-lite) — fastest, most cost-effective free-tier model</li>
+     *   <li>gemini-3.8-flash — most capable stable Flash model</li>
+     *   <li>gemini-3.6-flash — previous-generation stable Flash</li>
+     *   <li>gemini-3.1-flash-lite — last-resort lightweight fallback</li>
+     * </ol>
+     * Note: gemini-2.5-x and older models are limited to existing users only and have been removed
+     * from the fallback chain. gemini-2.0-flash and gemini-1.5-flash are no longer listed in the
+     * Google AI Studio model catalogue.
      *
      * @param prompt The user's input prompt
      * @return A CompletableFuture containing the AI's response text.
@@ -42,61 +53,52 @@ public class GeminiService {
                 return "Error: GEMINI_API_KEY is not configured in the environment variables.";
             }
 
-            // Build candidate models: lowest token burn first (gemini-2.5-flash-lite), followed by gemini-2.5-flash and gemini-3.8-flash
+            // Active free-tier text-generation models (newest-stable first, cheapest primary)
+            // Source: https://ai.google.dev/gemini-api/docs/models (verified October 2026)
             List<String> candidateModels = new ArrayList<>();
-            String configured = (model != null && !model.isBlank()) ? model.trim() : "gemini-2.5-flash-lite";
+            String configured = (model != null && !model.isBlank()) ? model.trim() : "gemini-3.5-flash-lite";
             candidateModels.add(configured);
 
-            if (!configured.equalsIgnoreCase("gemini-2.5-flash-lite")) {
-                candidateModels.add("gemini-2.5-flash-lite");
-            }
-            if (!configured.equalsIgnoreCase("gemini-2.5-flash")) {
-                candidateModels.add("gemini-2.5-flash");
-            }
-            if (!configured.equalsIgnoreCase("gemini-3.8-flash")) {
-                candidateModels.add("gemini-3.8-flash");
+            // Fallback order: fast flagship -> previous gen stable -> lite fallback
+            String[] standardFallbacks = {"gemini-3.5-flash-lite", "gemini-3.8-flash", "gemini-3.6-flash", "gemini-3.1-flash-lite"};
+            for (String fallback : standardFallbacks) {
+                if (candidateModels.stream().noneMatch(m -> m.equalsIgnoreCase(fallback))) {
+                    candidateModels.add(fallback);
+                }
             }
 
             String lastErrorMessage = null;
 
             for (String targetModel : candidateModels) {
-                // Try up to 2 attempts per candidate model
-                for (int attempt = 1; attempt <= 2; attempt++) {
-                    try {
-                        String responseText = callGeminiApi(targetModel, prompt);
-                        if (responseText != null && !responseText.isBlank()) {
-                            if (!targetModel.equalsIgnoreCase(configured)) {
-                                log.info("Successfully answered using fallback model: {}", targetModel);
-                            }
-                            return responseText;
+                try {
+                    String responseText = callGeminiApi(targetModel, prompt);
+                    if (responseText != null && !responseText.isBlank()) {
+                        if (!targetModel.equalsIgnoreCase(configured)) {
+                            log.info("Successfully answered using fallback Gemini model: {}", targetModel);
                         }
-                    } catch (HttpStatusCodeException ex) {
-                        int statusCode = ex.getStatusCode().value();
-                        log.warn("Gemini model {} returned HTTP {} (attempt {}): {}", targetModel, statusCode, attempt, ex.getMessage());
-
-                        // If 503 (high demand) or 429 (rate limit), pause briefly before retry
-                        if (statusCode == 503 || statusCode == 429) {
-                            lastErrorMessage = "Google Gemini is currently experiencing temporary high demand. Please try again in a moment.";
-                            try {
-                                Thread.sleep(attempt * 1000L);
-                            } catch (InterruptedException ignored) {
-                                Thread.currentThread().interrupt();
-                            }
-                            continue;
-                        }
-
-                        // For 404 (model deprecated/not found) or 400, switch immediately to next candidate
-                        lastErrorMessage = parseErrorMessage(ex.getResponseBodyAsString(), ex.getMessage());
-                        break;
-                    } catch (Exception ex) {
-                        log.warn("Gemini model {} call failed (attempt {}): {}", targetModel, attempt, ex.getMessage());
-                        lastErrorMessage = ex.getMessage();
-                        try {
-                            Thread.sleep(800L);
-                        } catch (InterruptedException ignored) {
-                            Thread.currentThread().interrupt();
-                        }
+                        return responseText;
                     }
+                } catch (HttpStatusCodeException ex) {
+                    int statusCode = ex.getStatusCode().value();
+                    String responseBody = ex.getResponseBodyAsString();
+                    String apiErrorMessage = parseErrorMessage(responseBody, ex.getMessage());
+                    log.warn("Gemini model {} returned HTTP {}: {}", targetModel, statusCode, apiErrorMessage);
+
+                    lastErrorMessage = switch (statusCode) {
+                        case 503 ->
+                            // Google infrastructure overloaded; immediately try next fallback model
+                            "Google Gemini is currently experiencing high demand. Please try again in a moment.";
+                        case 429 ->
+                            // Rate limit or quota exhausted; Google's message is most informative
+                            apiErrorMessage != null ? apiErrorMessage
+                                    : "Gemini API rate limit or quota exceeded. Please check your Google AI Studio quota.";
+                        default ->
+                            // 404 (model not found) or 400 (bad request) — move to next candidate
+                            apiErrorMessage;
+                    };
+                } catch (Exception ex) {
+                    log.warn("Gemini model {} call failed: {}", targetModel, ex.getMessage());
+                    lastErrorMessage = ex.getMessage();
                 }
             }
 
@@ -137,7 +139,7 @@ public class GeminiService {
                 if (msg != null && !msg.isBlank()) {
                     return msg;
                 }
-            } catch (Exception ignored) {}
+            } catch (com.fasterxml.jackson.core.JsonProcessingException ignored) {}
         }
         return defaultMsg;
     }
